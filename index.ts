@@ -1,10 +1,27 @@
+/**
+ * Common headers for API calls
+ */
 const headers = {
-  "Content-Type": "application/json",
   "Accept": "application/json",
+  "Content-Type": "application/json",
 }
 
-export type ChatType = "private" | "group" | "supergroup" | "channel";
-export type ChatAction = "typing" | "upload_photo" | "record_video" | "upload_video" | "record_audio" | "upload_audio" | "upload_document" | "find_location" | "record_video_note" | "upload_video_note";
+export type ChatType = "private"
+  | "group"
+  | "supergroup"
+  | "channel";
+
+export type ChatAction = "typing"
+  | "upload_photo"
+  | "record_video"
+  | "upload_video"
+  | "record_audio"
+  | "upload_audio"
+  | "upload_document"
+  | "find_location"
+  | "record_video_note"
+  | "upload_video_note";
+
 export type ChatMemberStatus = "creator" | "administrator" | "member" | "restricted" | "left" | "kicked";
 export type DocumentMimeType = "application/pdf" | "application/zip";
 export type MessageType =
@@ -37,10 +54,12 @@ export type MessageType =
 type MessageEntityType = "mention" | "hashtag" | "bot_command" | "url" | "email" | "bold" | "italic" | "code" | "pre" | "text_link" | "text_mention";
 type ParseMode = "Markdown" | "MarkdownV2" | "HTML";
 
+export type AllowedUpdates = keyof (Omit<Update, "update_id">)
+
 export interface SetWebHookOptions {
-  url?: string;
+  url: string;
   max_connections?: number;
-  allowed_updates?: string[];
+  allowed_updates?: AllowedUpdates[]
 }
 
 interface SendBasicOptions {
@@ -91,13 +110,6 @@ interface SendAudioOptions extends SendBasicOptions {
 
 interface SendDocumentOptions extends SendBasicOptions {
   document: string
-  parse_mode?: ParseMode;
-  caption?: string;
-}
-
-interface SendDocumentStreamOptions extends SendBasicOptions {
-  document: Blob
-  documentName: string
   parse_mode?: ParseMode;
   caption?: string;
 }
@@ -275,7 +287,9 @@ export interface Update {
   message?: Message;
   edited_message?: Message;
   channel_post?: Message;
-  edited_channel_post?: Message;
+  edited_channel_post?: Message
+  message_reaction?: MessageReactionUpdated
+  message_reaction_count?: MessageReactionCountUpdated
   inline_query?: InlineQuery;
   chosen_inline_result?: ChosenInlineResult;
   callback_query?: CallbackQuery;
@@ -290,7 +304,7 @@ export interface WebhookInfo {
   last_error_date?: number;
   last_error_message?: string;
   max_connections?: number;
-  allowed_updates?: string[];
+  allowed_updates?: AllowedUpdates[]
 }
 
 export interface User {
@@ -370,6 +384,56 @@ export interface Message {
   passport_data?: PassportData;
   reply_markup?: InlineKeyboardMarkup;
   sender_chat?: Chat
+}
+
+export interface MessageReactionUpdated {
+  chat: Chat
+  message_id: number
+  user?: User
+  actor_chat?: Chat
+  date: number
+  old_reaction: ReactionType[]
+  new_reaction: ReactionType[]
+}
+
+/**
+ * @see https://core.telegram.org/bots/api#reactiontype
+ */
+export type ReactionType = ReactionTypeEmoji
+  | ReactionTypeCustomEmoji
+
+/**
+ * @see https://core.telegram.org/bots/api#reactiontypeemoji
+ */
+export interface ReactionTypeEmoji {
+  type: "emoji"
+  emoji: string
+}
+
+/**
+ * @see https://core.telegram.org/bots/api#reactiontypecustomemoji
+ */
+export interface ReactionTypeCustomEmoji {
+  type: "custom_emoji"
+  custom_emoji_id: string
+}
+
+/**
+ * @see https://core.telegram.org/bots/api#messagereactioncountupdated
+ */
+export interface MessageReactionCountUpdated {
+  chat: Chat
+  message_id: number
+  date: number
+  reactions: ReactionCount[]
+}
+
+/**
+ * @see https://core.telegram.org/bots/api#reactioncount
+ */
+export interface ReactionCount {
+  type: ReactionType
+  total_count: number
 }
 
 export interface MessageEntity {
@@ -977,186 +1041,195 @@ interface BotCommand {
  * Methods
  */
 
-export function setWebhook(token: string, body: SetWebHookOptions, signal: any) {
+export function setWebhook(token: string, body: SetWebHookOptions, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/setWebhook`, {
     method: "POST",
     body: JSON.stringify(body),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<Boolean>)
 }
 
-export function deleteWebhook(token: string, signal: any) {
+export function deleteWebhook(token: string, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/deleteWebhook`, {
     method: "POST",
     body: JSON.stringify({}),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<Boolean>)
 }
 
 /** @todo cehck if response is the same as in typings */
-export function getWebhookInfo(token: string, signal: any): Promise<WebhookInfo> {
+export function getWebhookInfo(token: string, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/getWebhookInfo`, {
     method: "POST",
     body: JSON.stringify({}),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<WebhookInfo>)
 }
 
-export function getMe(token: string, signal: any): Promise<User> {
+export function getMe(token: string, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/getMe`, {
     method: "POST",
     body: JSON.stringify({}),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<User>)
 }
 
-export function sendMessage(token: string, payload: SendMessageOptions, signal: any): Promise<Message> {
+export function sendMessage(token: string, payload: SendMessageOptions, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<Message>)
 }
 
-export function editMessageText(token: string, payload: EditMessageTextOptions, signal: any): Promise<Message> {
+export function editMessageText(token: string, payload: EditMessageTextOptions, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/editMessageText`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<Message>)
 }
 
-export function sendPhoto(token: string, payload: SendPhotoOptions, signal: any): Promise<Message> {
+export function sendPhoto(token: string, payload: SendPhotoOptions, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<Message>)
 }
 
-export function sendAnimation(token: string, payload: SendAnimationOptions, signal: any): Promise<Message> {
+export function sendAnimation(token: string, payload: SendAnimationOptions, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/sendAnimation`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<Message>)
 }
 
-export function sendDocument(token: string, payload: SendDocumentOptions, signal: any): Promise<Message> {
+export function sendDocument(token: string, payload: SendDocumentOptions, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/sendDocument`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<Message>)
 }
 
-export function sendDocumentStream(token: string, payload: SendDocumentStreamOptions, signal: any): Promise<Message> {
-  const body = new FormData()
-
-  body.append("chat_id", String(payload.chat_id))
-
-  if (payload.caption) {
-    body.append("caption", payload.caption)
-  }
-
-  body.append("document", payload.document, payload.documentName)
-
-  if (payload.parse_mode) {
-    body.append("parse_mode", payload.parse_mode)
-  }
-
-  return fetch(`https://api.telegram.org/bot${token}/sendDocument`, {
+export function setMessageReaction(token: string, payload: {
+  chat_id: string | number
+  message_id: number
+  reaction?: ReactionType[]
+  is_big?: boolean
+}, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/setMessageReaction`, {
     method: "POST",
-    body: body,
+    body: JSON.stringify(payload),
+    headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<Boolean>)
 }
 
-export function getUserProfilePhotos(token: string, payload: GetUserProfilePhotosOptions, signal: any): Promise<UserProfilePhotos> {
+export function getUserProfilePhotos(token: string, payload: GetUserProfilePhotosOptions, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/getUserProfilePhotos`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<UserProfilePhotos>)
 }
 
-export function getFile(token: string, file_id: string, signal: any): Promise<File> {
+export function getFile(token: string, file_id: string, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/getFile`, {
     method: "POST",
     body: JSON.stringify({ file_id }),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<File>)
 }
 
-export function answerCallbackQuery(token: string, payload: AnswerCallbackQueryOptions, signal: any): Promise<File> {
+export function answerCallbackQuery(token: string, payload: AnswerCallbackQueryOptions, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<File>)
 }
 
-export function getChat(token: string, payload: GetChatOptions, signal: any): Promise<Chat> {
+export function getChat(token: string, payload: GetChatOptions, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/getChat`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<Chat>)
 }
 
-export function getChatMember(token: string, payload: { chat_id: string, user_id: string }, signal: AbortSignal): Promise<ChatMember> {
+export function getChatMember(token: string, payload: { chat_id: string, user_id: string }, signal?: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/getChatMember`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers,
     signal: signal
-  }).then(parseResponse)
+  }).then(parseResponse<ChatMember>)
 }
 
-export function setMyCommands(token: string, payload: SetMyCommandsOptions, signal: any): Promise<Chat> {
+export function setMyCommands(token: string, payload: SetMyCommandsOptions, signal?: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/setMyCommands`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<Chat>)
 }
 
-export function deleteMyCommands(token: string, payload: DeleteMyCommandsOptions, signal: any): Promise<Chat> {
+export function deleteMyCommands(token: string, payload: DeleteMyCommandsOptions, signal: AbortSignal): Promise<Chat> {
   return fetch(`https://api.telegram.org/bot${token}/deleteMyCommands`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers,
     signal
-  }).then(parseResponse)
+  }).then(parseResponse<Chat>)
 }
 
 /**
  * Parsers
  */
 
-export function parseUpdate(update: any): Update {
-  const update_id = Number(update.update_id);
-
-  return {
-    update_id,
-    message: parseMessage(update.message),
-    edited_message: parseMessage(update.edited_message),
-    callback_query: parseCallbackQuery(update.callback_query),
+export function parseUpdate(update: Update): Update {
+  const u: Update = {
+    update_id: Number(update.update_id)
   }
+
+  if (update.message) {
+    u.message = parseMessage(update.message)
+  }
+
+  if (update.edited_message) {
+    u.edited_message = parseMessage(update.edited_message)
+  }
+
+  if (update.callback_query) {
+    u.callback_query = parseCallbackQuery(update.callback_query)
+  }
+
+  if (update.message_reaction) {
+    u.message_reaction = parseMessageReaction(update.message_reaction)
+  }
+
+  if (update.message_reaction_count) {
+    u.message_reaction_count = parseMessageReactionCount(update.message_reaction_count)
+  }
+
+  return u
 }
 
 export function parseMessage(m?: any): Message | undefined {
@@ -1409,6 +1482,76 @@ export function parseCallbackQuery(v?: CallbackQuery): CallbackQuery | undefined
   }
 }
 
+function parseMessageReaction(d?: MessageReactionUpdated): MessageReactionUpdated | undefined {
+  if (!d) {
+    return
+  }
+
+  return {
+    chat: parseChat(d.chat),
+    message_id: Number(d.message_id),
+    user: d.user ? parseUser(d.user) : void 0,
+    actor_chat: d.actor_chat ? parseChat(d.actor_chat) : void 0,
+    date: Number(d.date),
+    old_reaction: parseReactions(d.old_reaction),
+    new_reaction: parseReactions(d.new_reaction),
+  }
+}
+
+function parseReactions(reactions: ReactionType[]): ReactionType[] {
+  if (!Array.isArray(reactions)) {
+    return []
+  }
+
+  return reactions.map(parseReaction)
+}
+
+function parseReaction(reaction: ReactionType): ReactionType {
+  if (reaction.type === "emoji") {
+    return {
+      type: "emoji",
+      emoji: String(reaction.emoji),
+    }
+  }
+
+  if (reaction.type === "custom_emoji") {
+    return {
+      type: "custom_emoji",
+      custom_emoji_id: String(reaction.custom_emoji_id),
+    }
+  }
+
+  throw new RangeError(`Unknown type of reaction: ${JSON.stringify(reaction)}`)
+}
+
+function parseMessageReactionCount(d?: MessageReactionCountUpdated): MessageReactionCountUpdated | undefined {
+  if (!d) {
+    return d
+  }
+
+  return {
+    chat: parseChat(d.chat),
+    message_id: Number(d.message_id),
+    date: Number(d.date),
+    reactions: parseReactionsCount(d.reactions)
+  }
+}
+
+function parseReactionsCount(reactions?: ReactionCount[]): ReactionCount[] {
+  if (!Array.isArray(reactions)) {
+    return []
+  }
+
+  return reactions.map(parseReactionCount)
+}
+
+function parseReactionCount(reaction: ReactionCount): ReactionCount {
+  return {
+    type: parseReaction(reaction.type),
+    total_count: Number(reaction.total_count),
+  }
+}
+
 function parseResponse<T>(response: Response) {
   return response.text().then(function (text) {
     let data: any
@@ -1423,7 +1566,7 @@ function parseResponse<T>(response: Response) {
     const ok = Boolean(data.ok)
 
     if (ok) {
-      return data.result || {} as T
+      return data.result as T
     }
 
     const error_code = Number(data.error_code ?? 0)
@@ -1442,3 +1585,15 @@ export class TelegramError extends Error {
     this.status = status
   }
 }
+
+/**
+ * Helpers
+ */
+export const SUPPORTED_REACTION_EMOJI = ["👍", "👎", "\u2764\ufe0f" // red heart
+  , "🔥", "🥰", "👏", "😁", "🤔", "🤯", "😱", "🤬", "😢"
+  , "🎉", "🤩", "🤮", "💩", "🙏", "👌", "🕊", "🤡", "🥱", "🥴", "😍", "🐳", "❤‍🔥"
+  , "🌚", "🌭", "💯", "🤣", "⚡", "🍌", "🏆", "💔", "🤨", "😐", "🍓", "🍾", "💋"
+  , "🖕", "😈", "😴", "😭", "🤓", "👻", "👨‍💻", "👀", "🎃", "🙈", "😇", "😨", "🤝"
+  , "✍", "🤗", "🫡", "🎅", "🎄", "☃", "💅", "🤪", "🗿", "🆒", "💘", "🙉", "🦄"
+  , "😘", "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"
+]
