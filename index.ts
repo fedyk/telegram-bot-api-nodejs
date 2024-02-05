@@ -22,37 +22,58 @@ export type ChatAction = "typing"
   | "record_video_note"
   | "upload_video_note";
 
-export type ChatMemberStatus = "creator" | "administrator" | "member" | "restricted" | "left" | "kicked";
+export type ChatMemberStatus = "creator"
+  | "administrator"
+  | "member"
+  | "restricted"
+  | "left"
+  | "kicked";
+
 export type DocumentMimeType = "application/pdf" | "application/zip";
+
 export type MessageType =
-  "text" |
-  "animation" |
-  "audio" |
-  "channel_chat_created" |
-  "contact" |
-  "delete_chat_photo" |
-  "document" |
-  "game" |
-  "group_chat_created" |
-  "invoice" |
-  "left_chat_member" |
-  "location" |
-  "migrate_from_chat_id" |
-  "migrate_to_chat_id" |
-  "new_chat_members" |
-  "new_chat_photo" |
-  "new_chat_title" |
-  "passport_data" |
-  "photo" |
-  "pinned_message" |
-  "sticker" |
-  "successful_payment" |
-  "supergroup_chat_created" |
-  "video" |
-  "video_note" |
-  "voice";
-type MessageEntityType = "mention" | "hashtag" | "bot_command" | "url" | "email" | "bold" | "italic" | "code" | "pre" | "text_link" | "text_mention";
-type ParseMode = "Markdown" | "MarkdownV2" | "HTML";
+  | "text"
+  | "animation"
+  | "audio"
+  | "channel_chat_created"
+  | "contact"
+  | "delete_chat_photo"
+  | "document"
+  | "game"
+  | "group_chat_created"
+  | "invoice"
+  | "left_chat_member"
+  | "location"
+  | "migrate_from_chat_id"
+  | "migrate_to_chat_id"
+  | "new_chat_members"
+  | "new_chat_photo"
+  | "new_chat_title"
+  | "passport_data"
+  | "photo"
+  | "pinned_message"
+  | "sticker"
+  | "successful_payment"
+  | "supergroup_chat_created"
+  | "video"
+  | "video_note"
+  | "voice";
+
+type MessageEntityType = "mention"
+  | "hashtag"
+  | "bot_command"
+  | "url"
+  | "email"
+  | "bold"
+  | "italic"
+  | "code"
+  | "pre"
+  | "text_link"
+  | "text_mention"
+
+type ParseMode = "Markdown"
+  | "MarkdownV2"
+  | "HTML";
 
 export type AllowedUpdates = keyof (Omit<Update, "update_id">)
 
@@ -1204,7 +1225,7 @@ export function deleteMyCommands(token: string, payload: DeleteMyCommandsOptions
  * Parsers
  */
 
-export function parseUpdate(update: Update): Update {
+export function parseUpdate(update: any): Update {
   const u: Update = {
     update_id: Number(update.update_id)
   }
@@ -1232,11 +1253,7 @@ export function parseUpdate(update: Update): Update {
   return u
 }
 
-export function parseMessage(m?: any): Message | undefined {
-  if (!m) {
-    return
-  }
-
+export function parseMessage(m: any): Message {
   return {
     message_id: Number(m.message_id),
     from: m.from ? parseUser(m.from) : void 0,

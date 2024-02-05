@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Telegram Bot API client for nodejs",
   "type": "module",
-  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "prepublishOnly": "npm run build",
     "build": "tsc",
