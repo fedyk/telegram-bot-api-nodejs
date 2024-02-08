@@ -1,11 +1,3 @@
-/**
- * Common headers for API calls
- */
-const headers = {
-  "Accept": "application/json",
-  "Content-Type": "application/json",
-}
-
 export type ChatType = "private"
   | "group"
   | "supergroup"
@@ -97,36 +89,10 @@ export interface SendMessageOptions extends SendBasicOptions {
   entities?: MessageEntity[]
 }
 
-interface AnswerInlineQueryOptions {
-  cache_time?: number;
-  is_personal?: boolean;
-  next_offset?: string;
-  switch_pm_text?: string;
-  switch_pm_parameter?: string;
-}
-
-interface ForwardMessageOptions {
-  disable_notification?: boolean;
-}
-
-export interface SendPhotoOptions extends SendBasicOptions {
-  photo: string
-  parse_mode?: ParseMode;
-  caption?: string;
-}
-
-export interface SendAnimationOptions extends SendBasicOptions {
+interface SendAnimationOptions extends SendBasicOptions {
   animation: string
   parse_mode?: ParseMode;
   caption?: string;
-}
-
-interface SendAudioOptions extends SendBasicOptions {
-  parse_mode?: ParseMode;
-  caption?: string;
-  duration?: number;
-  performer?: string;
-  title?: string;
 }
 
 interface SendDocumentOptions extends SendBasicOptions {
@@ -134,48 +100,6 @@ interface SendDocumentOptions extends SendBasicOptions {
   parse_mode?: ParseMode;
   caption?: string;
 }
-
-interface SendMediaGroupOptions {
-  disable_notification?: boolean;
-  reply_to_message_id?: number;
-}
-
-type SendStickerOptions = SendBasicOptions;
-
-interface SendVideoOptions extends SendBasicOptions {
-  parse_mode?: ParseMode;
-  duration?: number;
-  width?: number;
-  height?: number;
-  caption?: string;
-}
-
-interface SendVoiceOptions extends SendBasicOptions {
-  parse_mode?: ParseMode;
-  caption?: string;
-  duration?: number;
-}
-
-interface SendVideoNoteOptions extends SendBasicOptions {
-  duration?: number;
-  length?: number;
-}
-
-type SendLocationOptions = SendBasicOptions;
-
-type EditMessageLiveLocationOptions = EditMessageCaptionOptions;
-
-type StopMessageLiveLocationOptions = EditMessageCaptionOptions;
-
-interface SendVenueOptions extends SendBasicOptions {
-  foursquare_id?: string;
-}
-
-interface SendContactOptions extends SendBasicOptions {
-  last_name?: string;
-}
-
-type SendGameOptions = SendBasicOptions;
 
 interface SendInvoiceOptions extends SendBasicOptions {
   provider_data?: string;
@@ -1051,6 +975,10 @@ interface BotCommand {
 /**
  * Methods
  */
+const headers = {
+  "Accept": "application/json",
+  "Content-Type": "application/json",
+}
 
 export function setWebhook(token: string, body: SetWebHookOptions, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/setWebhook`, {
@@ -1107,7 +1035,11 @@ export function editMessageText(token: string, payload: EditMessageTextOptions, 
   }).then(parseResponse<Message>)
 }
 
-export function sendPhoto(token: string, payload: SendPhotoOptions, signal: AbortSignal) {
+export function sendPhoto(token: string, payload: SendBasicOptions & {
+  photo: string
+  caption?: string
+  parse_mode?: ParseMode
+}, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
     method: "POST",
     body: JSON.stringify(payload),
