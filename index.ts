@@ -217,10 +217,6 @@ export interface AnswerCallbackQueryOptions {
   cache_time?: number
 }
 
-export interface GetChatOptions {
-  chat_id: string
-}
-
 interface SetMyCommandsOptions {
   commands: BotCommand[]
 }
@@ -241,12 +237,6 @@ interface EditMessageReplyMarkupOptions {
   chat_id?: number | string;
   message_id?: number | string;
   inline_message_id?: string;
-}
-
-export interface GetUserProfilePhotosOptions {
-  user_id: number | string
-  offset?: number;
-  limit?: number;
 }
 
 interface SetGameScoreOptions {
@@ -1158,7 +1148,11 @@ export function setMessageReaction(token: string, payload: {
   }).then(parseResponse<Boolean>)
 }
 
-export function getUserProfilePhotos(token: string, payload: GetUserProfilePhotosOptions, signal: AbortSignal) {
+export function getUserProfilePhotos(token: string, payload: {
+  user_id: number | string
+  offset?: number;
+  limit?: number;
+}, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/getUserProfilePhotos`, {
     method: "POST",
     body: JSON.stringify(payload),
@@ -1167,10 +1161,12 @@ export function getUserProfilePhotos(token: string, payload: GetUserProfilePhoto
   }).then(parseResponse<UserProfilePhotos>)
 }
 
-export function getFile(token: string, file_id: string, signal: AbortSignal) {
+export function getFile(token: string, payload: {
+  file_id: string
+}, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/getFile`, {
     method: "POST",
-    body: JSON.stringify({ file_id }),
+    body: JSON.stringify(payload),
     headers,
     signal
   }).then(parseResponse<File>)
@@ -1185,7 +1181,9 @@ export function answerCallbackQuery(token: string, payload: AnswerCallbackQueryO
   }).then(parseResponse<File>)
 }
 
-export function getChat(token: string, payload: GetChatOptions, signal: AbortSignal) {
+export function getChat(token: string, payload: {
+  chat_id: string
+}, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/getChat`, {
     method: "POST",
     body: JSON.stringify(payload),
@@ -1569,7 +1567,7 @@ function parseReactionCount(reaction: ReactionCount): ReactionCount {
   }
 }
 
-function parseResponse<T>(response: Response) {
+export function parseResponse<T>(response: Response) {
   return response.text().then(function (text) {
     let data: any
 
@@ -1588,18 +1586,21 @@ function parseResponse<T>(response: Response) {
 
     const error_code = Number(data.error_code ?? 0)
     const description = String(data.description ?? "")
+    const parameters = data.parameters || {}
 
-    throw new TelegramError(description, response.status)
+    throw new TelegramError(description, error_code, parameters)
   })
 }
 
 export class TelegramError extends Error {
-  status: number
+  error_code: number
+  parameters: Record<string, any>
 
-  constructor(message: string, status: number) {
+  constructor(message: string, error_code: number, parameters: Record<string, any> = {}) {
     super(message)
 
-    this.status = status
+    this.error_code = error_code
+    this.parameters = parameters
   }
 }
 

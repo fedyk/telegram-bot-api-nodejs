@@ -1,2 +1,5 @@
 node_modules/
 .DS_Store
+test.ts
+test.js
+test.d.ts
