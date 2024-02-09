@@ -3,8 +3,15 @@
   "version": "1.0.2",
   "description": "Telegram Bot API client for nodejs",
   "type": "module",
-  "module": "index.js",
+  "main": "index.js",
   "types": "index.d.ts",
+  "engines": {
+    "node": ">=18.x"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
   "scripts": {
     "prepublishOnly": "npm run build",
     "build": "tsc",
@@ -14,7 +21,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^20.8.10",
-    "typescript": "^5.2.2"
+    "@types/node": "^20.11.17",
+    "typescript": "^5.3.3"
   }
 }
