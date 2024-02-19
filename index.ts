@@ -1547,3 +1547,27 @@ export const SUPPORTED_REACTION_EMOJI = ["👍", "👎", "\u2764\ufe0f" // red h
   , "✍", "🤗", "🫡", "🎅", "🎄", "☃", "💅", "🤪", "🗿", "🆒", "💘", "🙉", "🦄"
   , "😘", "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"
 ]
+
+export function isUnauthorizedError(err: unknown): err is Error {
+  return err instanceof Error && err.message === "Unauthorized"
+}
+
+export function isBotBlockedByUserError(err: unknown): err is Error {
+  return err instanceof Error && err.message.includes("Forbidden: bot was blocked by the user")
+}
+
+export function isChatNotFoundError(err: unknown): err is Error {
+  return err instanceof Error && err.message.includes("Bad Request: chat not found")
+}
+
+export function isUserDeactivatedError(err: unknown): err is Error {
+  return err instanceof Error && err.message.includes("Forbidden: user is deactivated")
+}
+
+export function isBotKickedFromSupergroupError(err: unknown): err is Error {
+  return err instanceof Error && err.message.includes("Forbidden: bot was kicked from the supergroup chat")
+}
+
+export function isNotEnoughRightsError(err: unknown): err is Error {
+  return err instanceof Error && err.message.includes("Bad Request: not enough rights to send text messages to the chat")
+}
