@@ -1526,13 +1526,13 @@ export function parseResponse<T>(response: Response) {
 
 export class TelegramError extends Error {
   status: number
-  parameters: Record<string, any>
+  data: Record<string, any>
 
-  constructor(message: string, status: number, parameters: Record<string, any> = {}) {
+  constructor(message: string, status: number, data: Record<string, any> = {}) {
     super(message)
 
     this.status = status
-    this.parameters = parameters
+    this.data = data
   }
 }
 
