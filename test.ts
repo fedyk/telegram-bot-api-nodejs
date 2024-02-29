@@ -11,7 +11,7 @@ describe("TelegramError", function () {
     ok(err instanceof TelegramError)
     equal(err.message, "test")
     equal(err.status, 123)
-    deepEqual(err.parameters, {
+    deepEqual(err.data, {
       test: 123
     })
   })
@@ -64,7 +64,7 @@ describe("parseResponse", function () {
 
         equal(err.message, "Bad Request: group chat was migrated to a supergroup chat")
         equal(err.status, 400)
-        deepEqual(err.parameters, {
+        deepEqual(err.data, {
           migrate_to_chat_id: -123456789
         })
       })
