@@ -989,10 +989,12 @@ export function setWebhook(token: string, body: SetWebHookOptions, signal: Abort
   }).then(parseResponse<Boolean>)
 }
 
-export function deleteWebhook(token: string, signal: AbortSignal) {
+export function deleteWebhook(token: string, params: {
+  drop_pending_updates?: boolean
+}, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/deleteWebhook`, {
     method: "POST",
-    body: JSON.stringify({}),
+    body: JSON.stringify(params),
     headers,
     signal
   }).then(parseResponse<Boolean>)
