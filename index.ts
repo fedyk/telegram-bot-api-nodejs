@@ -101,6 +101,10 @@ interface SendDocumentOptions extends SendBasicOptions {
   caption?: string;
 }
 
+interface SendMediaGroupOptions extends SendBasicOptions {
+  media: Array<InputMediaAudio | InputMediaDocument | InputMediaPhoto | InputMediaVideo>
+}
+
 interface SendInvoiceOptions extends SendBasicOptions {
   provider_data?: string;
   photo_url?: string;
@@ -425,19 +429,41 @@ interface InputMediaBase {
   parse_mode?: ParseMode;
 }
 
-interface InputMediaPhoto extends InputMediaBase {
-  type: "photo";
+export interface InputMediaAudio extends InputMediaBase {
+  type: "audio"
+  media: string
+  caption?: string
+  parse_mode?: ParseMode;
+  duration?: number
+  performer?: string
+  title?: string
 }
 
-interface InputMediaVideo extends InputMediaBase {
+export interface InputMediaDocument extends InputMediaBase {
+  type: "document";
+  media: string
+  caption?: string
+  parse_mode?: ParseMode;
+}
+
+export interface InputMediaPhoto extends InputMediaBase {
+  type: "photo";
+  media: string
+  caption?: string
+  parse_mode?: ParseMode;
+}
+
+export interface InputMediaVideo extends InputMediaBase {
   type: "video";
+  caption?: string
+  parse_mode?: ParseMode;
   width?: number;
   height?: number;
   duration?: number;
   supports_streaming?: boolean;
 }
 
-type InputMedia = InputMediaPhoto | InputMediaVideo;
+export type InputMedia = InputMediaPhoto | InputMediaVideo | InputMediaDocument | InputMediaPhoto;
 
 export interface VideoNote extends FileBase {
   length: number;
@@ -1066,6 +1092,15 @@ export function sendDocument(token: string, payload: SendDocumentOptions, signal
     headers,
     signal
   }).then(parseResponse<Message>)
+}
+
+export function sendMediaGroup(token: string, payload: SendMediaGroupOptions, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/sendMediaGroup`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
+    signal
+  }).then(parseResponse<Message[]>)
 }
 
 export function setMessageReaction(token: string, payload: {
