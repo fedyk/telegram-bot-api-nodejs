@@ -253,6 +253,7 @@ export interface User {
   last_name?: string;
   username?: string;
   language_code?: string;
+  is_premium?: boolean
   can_join_groups?: boolean
   supports_inline_queries?: boolean
   can_read_all_group_messages?: boolean
