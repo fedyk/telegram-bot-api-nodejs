@@ -221,6 +221,9 @@ interface PassportData {
   credentials: EncryptedCredentials;
 }
 
+/**
+ * @docs https://core.telegram.org/bots/api#update
+ */
 export interface Update {
   update_id: number;
   message?: Message;
@@ -267,6 +270,7 @@ export interface Chat {
   first_name?: string;
   last_name?: string;
   photo?: ChatPhoto;
+  bio?: string
   description?: string;
   invite_link?: string;
   pinned_message?: Message;
@@ -275,6 +279,9 @@ export interface Chat {
   sticker_set_name?: string;
 }
 
+/**
+ * @docs https://core.telegram.org/bots/api#message
+ */
 export interface Message {
   message_id: number;
   from?: User;
@@ -392,6 +399,7 @@ interface FileBase {
 export interface PhotoSize extends FileBase {
   width: number;
   height: number;
+  file_unique_id: string;
 }
 
 export interface Audio extends FileBase {
@@ -1307,6 +1315,7 @@ export function parsePhotoSizes(p: PhotoSize[]) {
 export function parsePhotoSize(p: PhotoSize) {
   return {
     file_id: String(p.file_id),
+    file_unique_id: String(p.file_unique_id),
     file_size: Number(p.file_size),
     width: Number(p.width),
     height: Number(p.height),
