@@ -256,7 +256,7 @@ export interface User {
   last_name?: string;
   username?: string;
   language_code?: string;
-  is_premium?: boolean
+  is_premium: boolean
   can_join_groups?: boolean
   supports_inline_queries?: boolean
   can_read_all_group_messages?: boolean
@@ -1282,7 +1282,7 @@ export function parseMessage(m: any): Message {
   }
 }
 
-export function parseUser(u: User) {
+export function parseUser(u: User): User {
   return {
     id: String(u.id),
     is_bot: Boolean(u.is_bot),
@@ -1290,6 +1290,7 @@ export function parseUser(u: User) {
     last_name: String(u.last_name ?? ""),
     username: String(u.username ?? ""),
     language_code: String(u.language_code ?? ""),
+    is_premium: Boolean(u.is_premium ?? ""),
   }
 }
 
