@@ -622,6 +622,8 @@ export interface Sticker {
   file_id: string;
   width: number;
   height: number;
+  thumbnail?: PhotoSize;
+  /** @deprecated */
   thumb?: PhotoSize;
   emoji?: string;
   set_name?: string;
@@ -985,7 +987,9 @@ export interface Animation extends FileBase {
   width: number;
   height: number;
   duration: number;
+  /** @deprecated */
   thumb?: PhotoSize;
+  thumbnail?: PhotoSize;
   file_name?: string;
   mime_type?: string;
 }
@@ -1329,6 +1333,7 @@ export function parseSticker(v: Sticker): Sticker {
     width: Number(v.width),
     height: Number(v.height),
     thumb: v.thumb ? parsePhotoSize(v.thumb) : void 0,
+    thumbnail: v.thumbnail ? parsePhotoSize(v.thumbnail) : void 0,
     emoji: String(v.emoji),
   }
 }
@@ -1400,7 +1405,7 @@ export function parseDocument(v: Document): Document {
   }
 }
 
-export function parseAnimation(v: Animation) {
+export function parseAnimation(v: Animation): Animation {
   return {
     file_id: String(v.file_id),
     width: Number(v.width),
@@ -1408,6 +1413,8 @@ export function parseAnimation(v: Animation) {
     duration: Number(v.duration),
     file_name: String(v.file_name),
     mime_type: String(v.mime_type || ""),
+    thumb: v.thumb ? parsePhotoSize(v.thumb) : void 0,
+    thumbnail: v.thumbnail ? parsePhotoSize(v.thumbnail) : void 0,
   }
 }
 
