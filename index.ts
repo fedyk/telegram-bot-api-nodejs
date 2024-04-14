@@ -1098,11 +1098,37 @@ export function sendAnimation(token: string, payload: SendAnimationOptions, sign
   }).then(parseResponse<Message>)
 }
 
-export function sendDocument(token: string, payload: SendDocumentOptions, signal: AbortSignal) {
+/**
+   * @example 
+   * 
+   * const body = new FormData()
+   *
+   * body.append("chat_id", payload.chat_id)
+   * body.append("caption", payload.caption)
+   * body.append("document", payload.document, payload.documentName)
+   *
+   * if (payload.parse_mode) {
+   *   body.append("parse_mode", payload.parse_mode)
+   * }
+   * 
+   * sendDocument("token", payload)
+   */
+export function sendDocument(token: string, payload: SendDocumentOptions | FormData, signal: AbortSignal) {
+  let h: HeadersInit | undefined = headers
+  let b: BodyInit | undefined = undefined
+
+  if (payload instanceof FormData) {
+    h = undefined
+    b = payload
+  }
+  else {
+    b = JSON.stringify(payload)
+  }
+
   return fetch(`https://api.telegram.org/bot${token}/sendDocument`, {
     method: "POST",
-    body: JSON.stringify(payload),
-    headers,
+    body: b,
+    headers: h,
     signal
   }).then(parseResponse<Message>)
 }
@@ -1603,26 +1629,26 @@ export const SUPPORTED_REACTION_EMOJI = ["👍", "👎", "\u2764\ufe0f" // red h
   , "😘", "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"
 ]
 
-export function isUnauthorizedError(err: unknown): err is Error {
+export function isUnauthorizedError(err: unknown): boolean {
   return err instanceof Error && err.message === "Unauthorized"
 }
 
-export function isBotBlockedByUserError(err: unknown): err is Error {
+export function isBotBlockedByUserError(err: unknown): boolean {
   return err instanceof Error && err.message.includes("Forbidden: bot was blocked by the user")
 }
 
-export function isChatNotFoundError(err: unknown): err is Error {
+export function isChatNotFoundError(err: unknown): boolean {
   return err instanceof Error && err.message.includes("Bad Request: chat not found")
 }
 
-export function isUserDeactivatedError(err: unknown): err is Error {
+export function isUserDeactivatedError(err: unknown): boolean {
   return err instanceof Error && err.message.includes("Forbidden: user is deactivated")
 }
 
-export function isBotKickedFromSupergroupError(err: unknown): err is Error {
+export function isBotKickedFromSupergroupError(err: unknown): boolean {
   return err instanceof Error && err.message.includes("Forbidden: bot was kicked from the supergroup chat")
 }
 
-export function isNotEnoughRightsError(err: unknown): err is Error {
+export function isNotEnoughRightsError(err: unknown): boolean {
   return err instanceof Error && err.message.includes("Bad Request: not enough rights to send text messages to the chat")
 }
