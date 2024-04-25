@@ -77,6 +77,7 @@ export interface SetWebHookOptions {
 
 interface SendBasicOptions {
   chat_id: number | string
+  message_thread_id?: number
   disable_notification?: boolean;
   reply_to_message_id?: number | string;
   reply_markup?: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply;
@@ -269,6 +270,7 @@ export interface Chat {
   username?: string;
   first_name?: string;
   last_name?: string;
+  is_forum?: boolean
   photo?: ChatPhoto;
   bio?: string
   description?: string;
@@ -279,11 +281,31 @@ export interface Chat {
   sticker_set_name?: string;
 }
 
+interface ForumTopicCreated {
+  name: string;
+  icon_color: number;
+  icon_custom_emoji_id?: string;
+}
+
+interface ForumTopicEdited {
+  name?: string;
+  icon_custom_emoji_id?: string;
+}
+
+interface ForumTopicClosed { }
+
+interface ForumTopicReopened { }
+
+interface GeneralForumTopicHidden { }
+
+interface GeneralForumTopicUnhidden { }
+
 /**
  * @docs https://core.telegram.org/bots/api#message
  */
 export interface Message {
   message_id: number;
+  message_thread_id?: number;
   from?: User;
   date: number;
   chat: Chat;
@@ -293,6 +315,8 @@ export interface Message {
   forward_signature?: string;
   forward_sender_name?: string;
   forward_date?: number;
+  is_topic_message?: boolean
+  is_automatic_forward?: boolean
   reply_to_message?: Message;
   edit_date?: number;
   media_group_id?: string;
@@ -331,6 +355,12 @@ export interface Message {
   passport_data?: PassportData;
   reply_markup?: InlineKeyboardMarkup;
   sender_chat?: Chat
+  forum_topic_created?: ForumTopicCreated
+  forum_topic_edited?: ForumTopicEdited
+  forum_topic_closed?: ForumTopicClosed
+  forum_topic_reopened?: ForumTopicReopened
+  general_forum_topic_hidden?: GeneralForumTopicHidden
+  general_forum_topic_unhidden?: GeneralForumTopicUnhidden
 }
 
 export interface MessageReactionUpdated {
@@ -1261,6 +1291,7 @@ export function parseUpdate(update: any): Update {
 
 export function parseMessage(m: any): Message {
   return {
+    ...m,
     message_id: Number(m.message_id),
     from: m.from ? parseUser(m.from) : void 0,
     date: Number(m.date),
@@ -1272,7 +1303,8 @@ export function parseMessage(m: any): Message {
     forward_signature: m.forward_signature ? String(m.forward_signature) : void 0, // string;
     forward_sender_name: m.forward_sender_name ? String(m.forward_sender_name) : void 0, // string;
     forward_date: m.forward_date ? Number(m.forward_date) : void 0, // number;
-    // reply_to_message: m.reply_to_message ? parseMessage(m.reply_to_message) : void 0, // Message;
+    reply_to_message: m.reply_to_message ? parseMessage(m.reply_to_message) : void 0,
+    is_automatic_forward: m.is_automatic_forward != null ? Boolean(m.is_automatic_forward) : void 0,
     edit_date: m.edit_date ? Number(m.edit_date) : void 0, // number;
     media_group_id: m.media_group_id ? String(m.media_group_id) : void 0, // string;
     author_signature: m.author_signature ? String(m.author_signature) : void 0, // string;
