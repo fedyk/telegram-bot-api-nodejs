@@ -238,6 +238,7 @@ export interface Update {
   callback_query?: CallbackQuery;
   shipping_query?: ShippingQuery;
   pre_checkout_query?: PreCheckoutQuery;
+  my_chat_member?: ChatMemberUpdated
 }
 
 export interface WebhookInfo {
@@ -1004,6 +1005,28 @@ interface PreCheckoutQuery {
   order_info?: OrderInfo;
 }
 
+interface ChatMemberUpdated {
+  chat: Chat
+  from: User
+  date: number
+  old_chat_member: ChatMember
+  new_chat_member: ChatMember
+  invite_link: ChatInviteLink
+  via_chat_folder_invite_link: boolean
+}
+
+interface ChatInviteLink {
+  invite_link: string
+  creator: User
+  creates_join_request: boolean
+  is_primary: boolean
+  is_revoked: boolean
+  name?: string
+  expire_date?: number
+  member_limit?: number
+  pending_join_request_count?: number
+}
+
 interface Game {
   title: string;
   description: string;
@@ -1286,10 +1309,13 @@ export function parseUpdate(update: any): Update {
     u.message_reaction_count = parseMessageReactionCount(update.message_reaction_count)
   }
 
-  return u
+  return {
+    ...update,
+    u
+  }
 }
 
-export function parseMessage(m: any): Message {
+function parseMessage(m: any): Message {
   return {
     ...m,
     message_id: Number(m.message_id),
@@ -1325,7 +1351,6 @@ export function parseMessage(m: any): Message {
     venue: m.venue ? parseVenue(m.venue) : void 0,
     poll: m.poll ? parsePoll(m.poll) : void 0,
     // new_chat_members?: User[];
-    // left_chat_member?: User;
     // new_chat_title?: string;
     // new_chat_photo?: PhotoSize[];
     // delete_chat_photo?: boolean;
@@ -1344,7 +1369,7 @@ export function parseMessage(m: any): Message {
   }
 }
 
-export function parseUser(u: User): User {
+function parseUser(u: User): User {
   return {
     id: String(u.id),
     is_bot: Boolean(u.is_bot),
@@ -1356,7 +1381,7 @@ export function parseUser(u: User): User {
   }
 }
 
-export function parseChat(c: Chat) {
+function parseChat(c: Chat) {
   return {
     id: Number(c.id),
     type: c.type,
@@ -1367,7 +1392,7 @@ export function parseChat(c: Chat) {
   }
 }
 
-export function parsePhotoSizes(p: PhotoSize[]) {
+function parsePhotoSizes(p: PhotoSize[]) {
   if (!Array.isArray(p)) {
     return void 0
   }
@@ -1375,7 +1400,7 @@ export function parsePhotoSizes(p: PhotoSize[]) {
   return p.map(parsePhotoSize)
 }
 
-export function parsePhotoSize(p: PhotoSize) {
+function parsePhotoSize(p: PhotoSize) {
   return {
     file_id: String(p.file_id),
     file_unique_id: String(p.file_unique_id),
@@ -1385,7 +1410,7 @@ export function parsePhotoSize(p: PhotoSize) {
   }
 }
 
-export function parseSticker(v: Sticker): Sticker {
+function parseSticker(v: Sticker): Sticker {
   return {
     file_id: String(v.file_id),
     width: Number(v.width),
@@ -1396,7 +1421,7 @@ export function parseSticker(v: Sticker): Sticker {
   }
 }
 
-export function parseVideo(v: Video): Video {
+function parseVideo(v: Video): Video {
   return {
     file_id: String(v.file_id),
     width: Number(v.width),
@@ -1409,7 +1434,7 @@ export function parseVideo(v: Video): Video {
   }
 }
 
-export function parseVoice(v: Voice): Voice {
+function parseVoice(v: Voice): Voice {
   return {
     file_id: String(v.file_id),
     file_size: Number(v.file_size),
@@ -1418,7 +1443,7 @@ export function parseVoice(v: Voice): Voice {
   }
 }
 
-export function parseVideoNote(v: VideoNote): VideoNote {
+function parseVideoNote(v: VideoNote): VideoNote {
   return {
     file_id: String(v.file_id),
     length: Number(v.length),
@@ -1427,7 +1452,7 @@ export function parseVideoNote(v: VideoNote): VideoNote {
   }
 }
 
-export function parseEntities(v: MessageEntity[]): MessageEntity[] {
+function parseEntities(v: MessageEntity[]): MessageEntity[] {
   if (!Array.isArray(v)) {
     return []
   }
@@ -1443,7 +1468,7 @@ export function parseEntities(v: MessageEntity[]): MessageEntity[] {
   })
 }
 
-export function parseAudio(v: Audio): Audio {
+function parseAudio(v: Audio): Audio {
   return {
     file_id: String(v.file_id),
     duration: Number(v.duration),
@@ -1454,7 +1479,7 @@ export function parseAudio(v: Audio): Audio {
   }
 }
 
-export function parseDocument(v: Document): Document {
+function parseDocument(v: Document): Document {
   return {
     file_id: String(v.file_id),
     file_name: String(v.file_name || ""),
@@ -1463,7 +1488,7 @@ export function parseDocument(v: Document): Document {
   }
 }
 
-export function parseAnimation(v: Animation): Animation {
+function parseAnimation(v: Animation): Animation {
   return {
     file_id: String(v.file_id),
     width: Number(v.width),
@@ -1476,7 +1501,7 @@ export function parseAnimation(v: Animation): Animation {
   }
 }
 
-export function parseContact(v: Contact) {
+function parseContact(v: Contact) {
   return {
     phone_number: String(v.phone_number),
     first_name: String(v.first_name),
@@ -1486,14 +1511,14 @@ export function parseContact(v: Contact) {
   }
 }
 
-export function parseLocation(v: Location) {
+function parseLocation(v: Location) {
   return {
     longitude: Number(v.longitude),
     latitude: Number(v.latitude),
   }
 }
 
-export function parseVenue(v: Venue) {
+function parseVenue(v: Venue) {
   return {
     location: parseLocation(v.location),
     title: String(v.title),
@@ -1505,7 +1530,7 @@ export function parseVenue(v: Venue) {
   }
 }
 
-export function parsePoll(v: Poll) {
+function parsePoll(v: Poll) {
   return {
     id: String(v.id),
     question: String(v.question),
@@ -1514,11 +1539,11 @@ export function parsePoll(v: Poll) {
   }
 }
 
-export function parsePollOptions(v: PollOption[]) {
+function parsePollOptions(v: PollOption[]) {
   return Array.isArray(v) ? v.map(parsePollOption) : []
 }
 
-export function parsePollOption(v: PollOption) {
+function parsePollOption(v: PollOption) {
   return {
     text: String(v.text),
     voter_count: Number(v.voter_count),
@@ -1528,7 +1553,7 @@ export function parsePollOption(v: PollOption) {
 /**
  * @see https://core.telegram.org/bots/api#callbackquery
  */
-export function parseCallbackQuery(v?: CallbackQuery): CallbackQuery | undefined {
+function parseCallbackQuery(v?: CallbackQuery): CallbackQuery | undefined {
   if (!v) {
     return
   }
