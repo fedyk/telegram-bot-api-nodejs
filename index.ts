@@ -1709,3 +1709,7 @@ export function isBotKickedFromSupergroupError(err: unknown): boolean {
 export function isNotEnoughRightsError(err: unknown): boolean {
   return err instanceof Error && err.message.includes("Bad Request: not enough rights to send text messages to the chat")
 }
+
+export function isUpgradeToSupergroupChatError(err: unknown): boolean {
+  return err instanceof Error && err.message.includes("Bad Request: group chat was upgraded to a supergroup chat")
+}
