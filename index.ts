@@ -148,6 +148,13 @@ export interface AnswerCallbackQueryOptions {
 
 interface SetMyCommandsOptions {
   commands: BotCommand[]
+  scope: BotCommandScope
+  language_code: string | undefined
+}
+
+interface GetMyCommandsOptions {
+  scope?: BotCommandScope
+  language_code?: string
 }
 
 interface DeleteMyCommandsOptions { }
@@ -1064,6 +1071,48 @@ interface BotCommand {
   description: string
 }
 
+type BotCommandScope = BotCommandScopeDefault |
+  BotCommandScopeAllPrivateChats |
+  BotCommandScopeAllGroupChats |
+  BotCommandScopeAllChatAdministrators |
+  BotCommandScopeChat |
+  BotCommandScopeChatAdministrators |
+  BotCommandScopeChatMember 
+
+interface BotCommandScopeDefault {
+  type: 'default';
+}
+
+interface BotCommandScopeAllPrivateChats {
+  type: 'all_private_chats';
+}
+
+interface BotCommandScopeAllGroupChats {
+  type: 'all_group_chats';
+}
+
+interface BotCommandScopeAllChatAdministrators {
+  type: 'all_chat_administrators';
+}
+
+interface BotCommandScopeChat {
+  type: 'chat';
+  chat_id: number | string;
+}
+
+interface BotCommandScopeChatAdministrators {
+  type: 'chat_administrators';
+  chat_id: number | string;
+}
+
+interface BotCommandScopeChatMember {
+  type: 'chat_member';
+  chat_id: number | string;
+  user_id: number;
+}
+
+
+
 /**
  * Methods
  */
@@ -1268,7 +1317,16 @@ export function setMyCommands(token: string, payload: SetMyCommandsOptions, sign
     body: JSON.stringify(payload),
     headers,
     signal
-  }).then(parseResponse<Chat>)
+  }).then(parseResponse<void>)
+}
+
+export function getMyCommands(token: string, payload?: GetMyCommandsOptions, signal?: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/getMyCommands`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
+    signal
+  }).then(parseResponse<BotCommand[]>)
 }
 
 export function deleteMyCommands(token: string, payload: DeleteMyCommandsOptions, signal: AbortSignal): Promise<Chat> {
