@@ -148,8 +148,8 @@ export interface AnswerCallbackQueryOptions {
 
 interface SetMyCommandsOptions {
   commands: BotCommand[]
-  scope: BotCommandScope
-  language_code: string | undefined
+  scope?: BotCommandScope
+  language_code?: string
 }
 
 interface GetMyCommandsOptions {
