@@ -246,6 +246,7 @@ export interface Update {
   shipping_query?: ShippingQuery;
   pre_checkout_query?: PreCheckoutQuery;
   my_chat_member?: ChatMemberUpdated
+
 }
 
 export interface WebhookInfo {
@@ -338,6 +339,7 @@ export interface Message {
   game?: Game;
   photo?: PhotoSize[];
   sticker?: Sticker;
+  story?: Story;
   video?: Video;
   voice?: Voice;
   video_note?: VideoNote;
@@ -454,6 +456,11 @@ export interface Document extends FileBase {
   file_name?: string;
   mime_type?: string;
   file_size?: number;
+}
+
+export interface Story  {
+  chat: Chat;
+  id: number
 }
 
 export interface Video extends FileBase {
