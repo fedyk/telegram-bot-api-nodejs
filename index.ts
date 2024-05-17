@@ -309,6 +309,20 @@ interface GeneralForumTopicHidden { }
 
 interface GeneralForumTopicUnhidden { }
 
+interface VideoChatScheduled {
+  start_date: number;
+}
+
+interface VideoChatStarted { }
+
+interface VideoChatEnded {
+  duration: number;
+}
+
+interface VideoChatParticipantsInvited {
+  users: User[];
+}
+
 /**
  * @docs https://core.telegram.org/bots/api#message
  */
@@ -371,6 +385,10 @@ export interface Message {
   forum_topic_reopened?: ForumTopicReopened
   general_forum_topic_hidden?: GeneralForumTopicHidden
   general_forum_topic_unhidden?: GeneralForumTopicUnhidden
+  video_chat_scheduled: VideoChatScheduled
+  video_chat_started: VideoChatStarted
+  video_chat_ended: VideoChatEnded
+  video_chat_participants_invited: VideoChatParticipantsInvited
 }
 
 export interface MessageReactionUpdated {
@@ -458,7 +476,7 @@ export interface Document extends FileBase {
   file_size?: number;
 }
 
-export interface Story  {
+export interface Story {
   chat: Chat;
   id: number
 }
@@ -1084,7 +1102,7 @@ type BotCommandScope = BotCommandScopeDefault |
   BotCommandScopeAllChatAdministrators |
   BotCommandScopeChat |
   BotCommandScopeChatAdministrators |
-  BotCommandScopeChatMember 
+  BotCommandScopeChatMember
 
 interface BotCommandScopeDefault {
   type: 'default';
