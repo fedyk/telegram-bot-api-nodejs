@@ -246,7 +246,7 @@ export interface Update {
   shipping_query?: ShippingQuery;
   pre_checkout_query?: PreCheckoutQuery;
   my_chat_member?: ChatMemberUpdated
-
+  chat_join_request?: ChatJoinRequest
 }
 
 export interface WebhookInfo {
@@ -301,25 +301,25 @@ interface ForumTopicEdited {
   icon_custom_emoji_id?: string;
 }
 
-interface ForumTopicClosed { }
+export interface ForumTopicClosed { }
 
-interface ForumTopicReopened { }
+export interface ForumTopicReopened { }
 
-interface GeneralForumTopicHidden { }
+export interface GeneralForumTopicHidden { }
 
-interface GeneralForumTopicUnhidden { }
+export interface GeneralForumTopicUnhidden { }
 
-interface VideoChatScheduled {
+export interface VideoChatScheduled {
   start_date: number;
 }
 
-interface VideoChatStarted { }
+export interface VideoChatStarted { }
 
-interface VideoChatEnded {
+export interface VideoChatEnded {
   duration: number;
 }
 
-interface VideoChatParticipantsInvited {
+export interface VideoChatParticipantsInvited {
   users: User[];
 }
 
@@ -1047,7 +1047,16 @@ interface ChatMemberUpdated {
   via_chat_folder_invite_link: boolean
 }
 
-interface ChatInviteLink {
+export interface ChatJoinRequest {
+  chat: Chat
+  from: User
+  user_chat_id: number
+  date: number
+  bio?: string
+  invite_link?: ChatInviteLink
+}
+
+export interface ChatInviteLink {
   invite_link: string
   creator: User
   creates_join_request: boolean
@@ -1433,9 +1442,6 @@ function parseMessage(m: any): Message {
     location: m.location ? parseLocation(m.location) : void 0,
     venue: m.venue ? parseVenue(m.venue) : void 0,
     poll: m.poll ? parsePoll(m.poll) : void 0,
-    // new_chat_members?: User[];
-    // new_chat_title?: string;
-    // new_chat_photo?: PhotoSize[];
     // delete_chat_photo?: boolean;
     // group_chat_created?: boolean;
     // supergroup_chat_created?: boolean;
