@@ -370,6 +370,7 @@ export interface Message {
   group_chat_created?: boolean;
   supergroup_chat_created?: boolean;
   channel_chat_created?: boolean;
+  message_auto_delete_timer_changed: MessageAutoDeleteTimerChanged
   migrate_to_chat_id?: number;
   migrate_from_chat_id?: number;
   pinned_message?: Message;
@@ -1002,6 +1003,10 @@ interface OrderInfo {
   phone_number?: string;
   email?: string;
   shipping_address?: ShippingAddress;
+}
+
+interface MessageAutoDeleteTimerChanged {
+  message_auto_delete_time: number
 }
 
 interface ShippingOption {
