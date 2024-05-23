@@ -246,6 +246,7 @@ export interface Update {
   shipping_query?: ShippingQuery;
   pre_checkout_query?: PreCheckoutQuery;
   my_chat_member?: ChatMemberUpdated
+  chat_member?: ChatMemberUpdated
   chat_join_request?: ChatJoinRequest
 }
 
