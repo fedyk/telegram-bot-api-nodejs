@@ -1074,7 +1074,7 @@ export interface ChatInviteLink {
   pending_join_request_count?: number
 }
 
-interface Game {
+export interface Game {
   title: string;
   description: string;
   photo: PhotoSize[];
@@ -1096,22 +1096,22 @@ export interface Animation extends FileBase {
 
 type CallbackGame = object;
 
-interface GameHighScore {
+export interface GameHighScore {
   position: number;
   user: User;
   score: number;
 }
 
-interface Metadata {
+export interface Metadata {
   type?: MessageType;
 }
 
-interface BotCommand {
+export interface BotCommand {
   command: string
   description: string
 }
 
-type BotCommandScope = BotCommandScopeDefault |
+export type BotCommandScope = BotCommandScopeDefault |
   BotCommandScopeAllPrivateChats |
   BotCommandScopeAllGroupChats |
   BotCommandScopeAllChatAdministrators |
@@ -1119,39 +1119,37 @@ type BotCommandScope = BotCommandScopeDefault |
   BotCommandScopeChatAdministrators |
   BotCommandScopeChatMember
 
-interface BotCommandScopeDefault {
-  type: 'default';
+export interface BotCommandScopeDefault {
+  type: "default";
 }
 
-interface BotCommandScopeAllPrivateChats {
-  type: 'all_private_chats';
+export interface BotCommandScopeAllPrivateChats {
+  type: "all_private_chats";
 }
 
-interface BotCommandScopeAllGroupChats {
-  type: 'all_group_chats';
+export interface BotCommandScopeAllGroupChats {
+  type: "all_group_chats";
 }
 
-interface BotCommandScopeAllChatAdministrators {
-  type: 'all_chat_administrators';
+export interface BotCommandScopeAllChatAdministrators {
+  type: "all_chat_administrators";
 }
 
-interface BotCommandScopeChat {
-  type: 'chat';
+export interface BotCommandScopeChat {
+  type: "chat";
   chat_id: number | string;
 }
 
-interface BotCommandScopeChatAdministrators {
-  type: 'chat_administrators';
+export interface BotCommandScopeChatAdministrators {
+  type: "chat_administrators";
   chat_id: number | string;
 }
 
-interface BotCommandScopeChatMember {
-  type: 'chat_member';
+export interface BotCommandScopeChatMember {
+  type: "chat_member";
   chat_id: number | string;
   user_id: number;
 }
-
-
 
 /**
  * Methods
