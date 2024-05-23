@@ -330,9 +330,10 @@ export interface VideoChatParticipantsInvited {
 export interface Message {
   message_id: number;
   message_thread_id?: number;
-  from?: User;
-  date: number;
-  chat: Chat;
+  from?: User
+  date: number
+  chat: Chat
+  via_bot?: User
   forward_from?: User;
   forward_from_chat?: Chat;
   forward_from_message_id?: number;
