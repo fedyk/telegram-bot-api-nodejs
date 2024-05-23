@@ -361,6 +361,7 @@ export interface Message {
   video_note?: VideoNote;
   caption?: string;
   contact?: Contact;
+  dice?: Dice;
   location?: Location;
   venue?: Venue;
   poll?: Poll;
@@ -552,6 +553,11 @@ export interface Contact {
   last_name?: string;
   user_id?: number;
   vcard?: string;
+}
+
+export interface Dice {
+  emoji: string;
+  value: string;
 }
 
 export interface Location {
