@@ -238,6 +238,10 @@ export interface Update {
   edited_message?: Message;
   channel_post?: Message;
   edited_channel_post?: Message
+  business_connection?: BusinessConnection
+  business_message?: Message
+  edited_business_message?: Message
+  deleted_business_messages?: BusinessMessagesDeleted
   message_reaction?: MessageReactionUpdated
   message_reaction_count?: MessageReactionCountUpdated
   inline_query?: InlineQuery;
@@ -269,8 +273,9 @@ export interface User {
   language_code?: string;
   is_premium: boolean
   can_join_groups?: boolean
-  supports_inline_queries?: boolean
   can_read_all_group_messages?: boolean
+  supports_inline_queries?: boolean
+  can_connect_to_business?: boolean
 }
 
 export interface Chat {
@@ -393,6 +398,21 @@ export interface Message {
   video_chat_started: VideoChatStarted
   video_chat_ended: VideoChatEnded
   video_chat_participants_invited: VideoChatParticipantsInvited
+}
+
+export interface BusinessConnection {
+  id: string
+  user: User
+  user_chat_id: number
+  date: number
+  can_reply: boolean
+  is_enabled: boolean
+}
+
+export interface BusinessMessagesDeleted {
+  business_connection_id: string
+  chat: Chat
+  message_ids: number[]
 }
 
 export interface MessageReactionUpdated {
@@ -1381,6 +1401,15 @@ export function deleteMyCommands(token: string, payload: DeleteMyCommandsOptions
     headers,
     signal
   }).then(parseResponse<Chat>)
+}
+
+export function getBusinessConnection(token: string, payload: { business_connection_id: string }, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/getBusinessConnection`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
+    signal
+  }).then(parseResponse<BusinessConnection>)
 }
 
 /**
