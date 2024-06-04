@@ -77,6 +77,7 @@ export interface SetWebHookOptions {
 
 interface SendBasicOptions {
   chat_id: number | string
+  business_connection_id?: string
   message_thread_id?: number
   disable_notification?: boolean;
   reply_to_message_id?: number | string;
@@ -336,7 +337,9 @@ export interface Message {
   message_id: number;
   message_thread_id?: number;
   from?: User
+  sender_business_bot?: User
   date: number
+  business_connection_id?: string
   chat: Chat
   via_bot?: User
   forward_from?: User;
@@ -349,6 +352,7 @@ export interface Message {
   is_automatic_forward?: boolean
   reply_to_message?: Message;
   edit_date?: number;
+  is_from_offline?: boolean
   media_group_id?: string;
   author_signature?: string;
   text?: string;
