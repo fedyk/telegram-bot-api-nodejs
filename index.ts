@@ -1850,3 +1850,7 @@ export function isUpgradeToSupergroupChatError(err: unknown): boolean {
 export function isTextMustBeNonEmptyError(err: unknown): boolean {
   return err instanceof Error && err.message.includes("Bad Request: text must be non-empty")
 }
+
+export function isTooManyRequestsError(err: unknown): boolean {
+  return err instanceof Error && err.message.includes("Too Many Requests: retry after")
+}
