@@ -1854,3 +1854,27 @@ export function isTextMustBeNonEmptyError(err: unknown): boolean {
 export function isTooManyRequestsError(err: unknown): boolean {
   return err instanceof Error && err.message.includes("Too Many Requests: retry after")
 }
+
+export function parseRetryAfterTime(err: unknown): number {
+  if (!(err instanceof Error)) {
+    throw new RangeError("`err` needs to be an Error")
+  }
+
+  if (!err.message.startsWith("Too Many Requests: retry after")) {
+    throw new RangeError(`'err' message does not start with "Too Many Requests: retry after" ("${err.message}")`)
+  }
+
+  const param = err.message.replace("Too Many Requests: retry after", "").trim()
+
+  if (!param) {
+    throw new RangeError(`'err' message does not match the format "Too Many Requests format"`)
+  }
+
+  const time = Number(param)
+
+  if (Number.isNaN(time)) {
+    throw new RangeError(`'err' message has invalid time parameter ("${err.message}"`)
+  }
+
+  return time
+}

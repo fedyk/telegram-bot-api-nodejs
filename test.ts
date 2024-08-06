@@ -1,6 +1,6 @@
 import { describe, it } from "node:test"
 import { ok, deepEqual, equal } from "node:assert/strict"
-import { TelegramError, parseResponse } from "./index.js"
+import { TelegramError, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime } from "./index.js"
 
 describe("TelegramError", function () {
   it("should except additional details", function () {
@@ -69,5 +69,23 @@ describe("parseResponse", function () {
         })
       })
       .finally(done)
+  })
+})
+
+describe("isTextMustBeNonEmptyError", () => {
+  it("should detect error", () => {
+    equal(isTextMustBeNonEmptyError(new Error("Bad Request: text must be non-empty")), true)
+  })
+})
+
+describe("isTooManyRequestsError", () => {
+  it("should detect error", () => {
+    equal(isTooManyRequestsError(new Error("Too Many Requests: retry after 39")), true)
+  })
+})
+
+describe("parseRetryAfterTime", () => {
+  it("parse the time in Too Many Requests error", () => {
+    equal(parseRetryAfterTime(new Error("Too Many Requests: retry after 39")), 39)
   })
 })
