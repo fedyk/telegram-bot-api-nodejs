@@ -10,7 +10,8 @@
   },
   "files": [
     "index.js",
-    "index.d.ts"
+    "index.d.ts",
+    "currencies.json"
   ],
   "scripts": {
     "prepublishOnly": "npm run build",
