@@ -1,3 +1,5 @@
+export { formatPrice } from "./currencies.js"
+
 export type ChatType = "private"
   | "group"
   | "supergroup"
