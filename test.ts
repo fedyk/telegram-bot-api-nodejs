@@ -1,7 +1,6 @@
 import { describe, it } from "node:test"
 import { ok, deepEqual, equal } from "node:assert/strict"
-import { TelegramError, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime } from "./index.js"
-import { formatPrice } from "./currencies.js"
+import { TelegramError, currencies, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime } from "./index.js"
 
 describe("TelegramError", function () {
   it("should except additional details", function () {
@@ -91,11 +90,11 @@ describe(parseRetryAfterTime.name, function () {
   })
 })
 
-describe(formatPrice.name, function () {
+describe(currencies.formatPrice.name, function () {
   it("format amount", function () {
-    equal(formatPrice(100, "USD"), "$1")
-    equal(formatPrice(100, "EUR"), "1 €")
-    equal(formatPrice(123, "EUR"), "1.23 €")
-    equal(formatPrice(123, "PLN"), "1.23 zł")
+    equal(currencies.formatPrice(100, "USD"), "$1")
+    equal(currencies.formatPrice(100, "EUR"), "1 €")
+    equal(currencies.formatPrice(123, "EUR"), "1.23 €")
+    equal(currencies.formatPrice(123, "PLN"), "1.23 zł")
   })
 })
