@@ -1,5 +1,7 @@
 import { readFileSync } from "fs"
 
+const __dirname = import.meta.dirname
+
 export interface Currency {
   code: string
   title: string
@@ -58,7 +60,7 @@ export function formatPrice(amount: number, code: string) {
 
 
 function loadCurrencies(): Record<string, Currency> {
-  return JSON.parse(readFileSync("./currencies.json", {
+  return JSON.parse(readFileSync(`${__dirname}/currencies.json`, {
     encoding: "utf8"
   }))
 }

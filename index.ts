@@ -350,6 +350,7 @@ export interface Message {
   forward_signature?: string;
   forward_sender_name?: string;
   forward_date?: number;
+  forward_origin?: MessageOrigin
   is_topic_message?: boolean
   is_automatic_forward?: boolean
   reply_to_message?: Message;
@@ -482,6 +483,34 @@ export interface MessageEntity {
 interface FileBase {
   file_id: string;
   file_size?: number;
+}
+
+export type MessageOrigin = MessageOriginUser | MessageOriginHiddenUser | MessageOriginChat | MessageOriginChannel
+
+export interface MessageOriginUser {
+  type: "user";
+  date: number;
+  sender_user: User;
+}
+
+export interface MessageOriginHiddenUser {
+  type: "hidden_user";
+  date: number;
+  sender_user_name: string;
+}
+
+export interface MessageOriginChat {
+  type: "chat";
+  date: number;
+  sender_chat: Chat;
+  author_signature?: string; // Optional
+}
+
+export interface MessageOriginChannel {
+  type: "channel";
+  date: number;
+  chat: Chat;
+  message_id: number;
 }
 
 export interface PhotoSize extends FileBase {
@@ -1879,4 +1908,30 @@ export function parseRetryAfterTime(err: unknown): number {
   }
 
   return time
+}
+
+export function resolveNameFromMessageOrigin(messageOrigin: MessageOrigin) {
+  if (messageOrigin.type === "user") {
+    return resolveChatName(messageOrigin.sender_user)
+  }
+
+  if (messageOrigin.type === "hidden_user") {
+    return messageOrigin.sender_user_name || "Hidden User"
+  }
+
+  if (messageOrigin.type === "channel") {
+    return resolveChatName(messageOrigin.chat)
+  }
+
+  if (messageOrigin.type === "chat") {
+    return resolveChatName(messageOrigin.sender_chat)
+  }
+
+  return "unknown origin"
+}
+
+export function resolveChatName(chat: any) {
+  return `${chat.first_name || ""} ${chat.last_name || ""}`.trim() ||
+    `${chat.title}`.trim() ||
+    `@${chat.username || ""}`.trim()
 }
