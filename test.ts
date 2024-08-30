@@ -1,6 +1,7 @@
 import { describe, it } from "node:test"
 import { ok, deepEqual, equal } from "node:assert/strict"
 import { TelegramError, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime } from "./index.js"
+import { formatPrice } from "./currencies.js"
 
 describe("TelegramError", function () {
   it("should except additional details", function () {
@@ -17,7 +18,7 @@ describe("TelegramError", function () {
   })
 })
 
-describe("parseResponse", function () {
+describe(parseResponse.name, function () {
   it("should parse success response", function (ctx, done) {
     const response = new Response(JSON.stringify({
       ok: true,
@@ -72,20 +73,29 @@ describe("parseResponse", function () {
   })
 })
 
-describe("isTextMustBeNonEmptyError", () => {
-  it("should detect error", () => {
+describe(isTextMustBeNonEmptyError.name, function () {
+  it("should detect error", function () {
     equal(isTextMustBeNonEmptyError(new Error("Bad Request: text must be non-empty")), true)
   })
 })
 
-describe("isTooManyRequestsError", () => {
-  it("should detect error", () => {
+describe(isTooManyRequestsError.name, function () {
+  it("should detect error", function () {
     equal(isTooManyRequestsError(new Error("Too Many Requests: retry after 39")), true)
   })
 })
 
-describe("parseRetryAfterTime", () => {
-  it("parse the time in Too Many Requests error", () => {
+describe(parseRetryAfterTime.name, function () {
+  it("parse the time in Too Many Requests error", function () {
     equal(parseRetryAfterTime(new Error("Too Many Requests: retry after 39")), 39)
+  })
+})
+
+describe(formatPrice.name, function () {
+  it("format amount", function () {
+    equal(formatPrice(100, "USD"), "$1")
+    equal(formatPrice(100, "EUR"), "1 €")
+    equal(formatPrice(123, "EUR"), "1.23 €")
+    equal(formatPrice(123, "PLN"), "1.23 zł")
   })
 })

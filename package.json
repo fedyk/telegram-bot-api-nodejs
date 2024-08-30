@@ -17,7 +17,8 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "pretest": "npm run build",
-    "test": "node --test"
+    "test": "node --test",
+    "spec": "node --test spec.js"
   },
   "author": "",
   "license": "ISC",

@@ -1013,7 +1013,7 @@ interface LabeledPrice {
   amount: number;
 }
 
-interface Invoice {
+export interface Invoice {
   title: string;
   description: string;
   start_parameter: string;

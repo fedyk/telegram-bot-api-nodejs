@@ -3,4 +3,8 @@ index.js
 index.d.ts
 test.js
 test.d.ts
+spec.js
+spec.d.ts
+currencies.js
+currencies.d.ts
 .DS_Store
