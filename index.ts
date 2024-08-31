@@ -77,7 +77,7 @@ export interface SetWebHookOptions {
   allowed_updates?: AllowedUpdates[]
 }
 
-interface SendBasicOptions {
+export interface SendBasicOptions {
   chat_id: number | string
   business_connection_id?: string
   message_thread_id?: number
@@ -93,23 +93,23 @@ export interface SendMessageOptions extends SendBasicOptions {
   entities?: MessageEntity[]
 }
 
-interface SendAnimationOptions extends SendBasicOptions {
+export interface SendAnimationOptions extends SendBasicOptions {
   animation: string
   parse_mode?: ParseMode;
   caption?: string;
 }
 
-interface SendDocumentOptions extends SendBasicOptions {
+export interface SendDocumentOptions extends SendBasicOptions {
   document: string
   parse_mode?: ParseMode;
   caption?: string;
 }
 
-interface SendMediaGroupOptions extends SendBasicOptions {
+export interface SendMediaGroupOptions extends SendBasicOptions {
   media: Array<InputMediaAudio | InputMediaDocument | InputMediaPhoto | InputMediaVideo>
 }
 
-interface SendInvoiceOptions extends SendBasicOptions {
+export interface SendInvoiceOptions extends SendBasicOptions {
   provider_data?: string;
   photo_url?: string;
   photo_size?: number;
@@ -122,7 +122,7 @@ interface SendInvoiceOptions extends SendBasicOptions {
   is_flexible?: boolean;
 }
 
-interface RestrictChatMemberOptions {
+export interface RestrictChatMemberOptions {
   until_date?: number;
   can_send_messages?: boolean;
   can_send_media_messages?: boolean;
@@ -130,7 +130,7 @@ interface RestrictChatMemberOptions {
   can_add_web_page_previews?: boolean;
 }
 
-interface PromoteChatMemberOptions {
+export interface PromoteChatMemberOptions {
   can_change_info?: boolean
   can_post_messages?: boolean
   can_edit_messages?: boolean
@@ -149,36 +149,36 @@ export interface AnswerCallbackQueryOptions {
   cache_time?: number
 }
 
-interface SetMyCommandsOptions {
+export interface SetMyCommandsOptions {
   commands: BotCommand[]
   scope?: BotCommandScope
   language_code?: string
 }
 
-interface GetMyCommandsOptions {
+export interface GetMyCommandsOptions {
   scope?: BotCommandScope
   language_code?: string
 }
 
-interface DeleteMyCommandsOptions { }
+export interface DeleteMyCommandsOptions { }
 
-interface EditMessageTextOptions extends EditMessageReplyMarkupOptions {
+export interface EditMessageTextOptions extends EditMessageReplyMarkupOptions {
   parse_mode?: ParseMode;
   disable_web_page_preview?: boolean;
   text: string
 }
 
-interface EditMessageCaptionOptions extends EditMessageReplyMarkupOptions {
+export interface EditMessageCaptionOptions extends EditMessageReplyMarkupOptions {
   reply_markup?: InlineKeyboardMarkup;
 }
 
-interface EditMessageReplyMarkupOptions {
+export interface EditMessageReplyMarkupOptions {
   chat_id?: number | string;
   message_id?: number | string;
   inline_message_id?: string;
 }
 
-interface SetGameScoreOptions {
+export interface SetGameScoreOptions {
   force?: boolean;
   disable_edit_message?: boolean;
   chat_id?: number;
@@ -186,29 +186,29 @@ interface SetGameScoreOptions {
   inline_message_id?: string;
 }
 
-interface GetGameHighScoresOptions {
+export interface GetGameHighScoresOptions {
   chat_id?: number;
   message_id?: number;
   inline_message_id?: string;
 }
 
-interface AnswerShippingQueryOptions {
+export interface AnswerShippingQueryOptions {
   shipping_options?: ShippingOption[];
   error_message?: string;
 }
 
-interface AnswerPreCheckoutQueryOptions {
+export interface AnswerPreCheckoutQueryOptions {
   error_message?: string;
 }
 
 /// TELEGRAM TYPES ///
-interface PassportFile {
+export interface PassportFile {
   file_id: string;
   file_size: number;
   file_date: number;
 }
 
-interface EncryptedPassportElement {
+export interface EncryptedPassportElement {
   type: string;
   data?: string;
   phone_number?: string;
@@ -221,13 +221,13 @@ interface EncryptedPassportElement {
   hash: string;
 }
 
-interface EncryptedCredentials {
+export interface EncryptedCredentials {
   data: string;
   hash: string;
   secret: string;
 }
 
-interface PassportData {
+export interface PassportData {
   data: EncryptedPassportElement[];
   credentials: EncryptedCredentials;
 }
@@ -299,13 +299,13 @@ export interface Chat {
   sticker_set_name?: string;
 }
 
-interface ForumTopicCreated {
+export interface ForumTopicCreated {
   name: string;
   icon_color: number;
   icon_custom_emoji_id?: string;
 }
 
-interface ForumTopicEdited {
+export interface ForumTopicEdited {
   name?: string;
   icon_custom_emoji_id?: string;
 }
@@ -480,7 +480,7 @@ export interface MessageEntity {
   user?: User;
 }
 
-interface FileBase {
+export interface FileBase {
   file_id: string;
   file_size?: number;
 }
@@ -554,7 +554,7 @@ export interface Voice extends FileBase {
   mime_type?: string;
 }
 
-interface InputMediaBase {
+export interface InputMediaBase {
   media: string;
   caption?: string;
   parse_mode?: ParseMode;
@@ -651,20 +651,20 @@ export interface File extends FileBase {
   file_path?: string;
 }
 
-interface ReplyKeyboardMarkup {
+export interface ReplyKeyboardMarkup {
   keyboard: KeyboardButton[][];
   resize_keyboard?: boolean;
   one_time_keyboard?: boolean;
   selective?: boolean;
 }
 
-interface KeyboardButton {
+export interface KeyboardButton {
   text: string;
   request_contact?: boolean;
   request_location?: boolean;
 }
 
-interface ReplyKeyboardRemove {
+export interface ReplyKeyboardRemove {
   remove_keyboard: boolean;
   selective?: boolean;
 }
@@ -684,7 +684,7 @@ export interface InlineKeyboardButton {
   pay?: boolean;
 }
 
-interface LoginUrl {
+export interface LoginUrl {
   url: string;
   forward_text?: string;
   bot_username?: string;
@@ -701,19 +701,19 @@ export interface CallbackQuery {
   game_short_name?: string;
 }
 
-interface ForceReply {
+export interface ForceReply {
   force_reply: boolean;
   selective?: boolean;
 }
 
-interface ChatPhoto {
+export interface ChatPhoto {
   small_file_id: string
   small_file_unique_id: string
   big_file_id: string
   big_file_unique_id: string
 }
 
-interface ChatMember {
+export interface ChatMember {
   user: User;
   status: ChatMemberStatus;
   until_date?: number;
@@ -734,7 +734,7 @@ interface ChatMember {
   can_add_web_page_previews?: boolean;
 }
 
-interface ChatPermissions {
+export interface ChatPermissions {
   can_send_messages?: boolean;
   can_send_media_messages?: boolean;
   can_send_polls?: boolean;
@@ -758,21 +758,21 @@ export interface Sticker {
   file_size?: number;
 }
 
-interface StickerSet {
+export interface StickerSet {
   name: string;
   title: string;
   contains_masks: boolean;
   stickers: Sticker[];
 }
 
-interface MaskPosition {
+export interface MaskPosition {
   point: string;
   x_shift: number;
   y_shift: number;
   scale: number;
 }
 
-interface InlineQuery {
+export interface InlineQuery {
   id: string;
   from: User;
   location?: Location;
@@ -780,12 +780,12 @@ interface InlineQuery {
   offset: string;
 }
 
-interface InlineQueryResultBase {
+export interface InlineQueryResultBase {
   id: string;
   reply_markup?: InlineKeyboardMarkup;
 }
 
-interface InlineQueryResultArticle extends InlineQueryResultBase {
+export interface InlineQueryResultArticle extends InlineQueryResultBase {
   type: "article";
   title: string;
   input_message_content: InputMessageContent;
@@ -797,7 +797,7 @@ interface InlineQueryResultArticle extends InlineQueryResultBase {
   thumb_height?: number;
 }
 
-interface InlineQueryResultPhoto extends InlineQueryResultBase {
+export interface InlineQueryResultPhoto extends InlineQueryResultBase {
   type: "photo";
   photo_url: string;
   thumb_url: string;
@@ -809,7 +809,7 @@ interface InlineQueryResultPhoto extends InlineQueryResultBase {
   input_message_content?: InputMessageContent;
 }
 
-interface InlineQueryResultGif extends InlineQueryResultBase {
+export interface InlineQueryResultGif extends InlineQueryResultBase {
   type: "gif";
   gif_url: string;
   gif_width?: number;
@@ -821,7 +821,7 @@ interface InlineQueryResultGif extends InlineQueryResultBase {
   input_message_content?: InputMessageContent;
 }
 
-interface InlineQueryResultMpeg4Gif extends InlineQueryResultBase {
+export interface InlineQueryResultMpeg4Gif extends InlineQueryResultBase {
   type: "mpeg4_gif";
   mpeg4_url: string;
   mpeg4_width?: number;
@@ -833,7 +833,7 @@ interface InlineQueryResultMpeg4Gif extends InlineQueryResultBase {
   input_message_content?: InputMessageContent;
 }
 
-interface InlineQueryResultVideo extends InlineQueryResultBase {
+export interface InlineQueryResultVideo extends InlineQueryResultBase {
   type: "video";
   video_url: string;
   mime_type: string;
@@ -847,7 +847,7 @@ interface InlineQueryResultVideo extends InlineQueryResultBase {
   input_message_content?: InputMessageContent;
 }
 
-interface InlineQueryResultAudio extends InlineQueryResultBase {
+export interface InlineQueryResultAudio extends InlineQueryResultBase {
   type: "audio";
   audio_url: string;
   title: string;
@@ -857,7 +857,7 @@ interface InlineQueryResultAudio extends InlineQueryResultBase {
   input_message_content?: InputMessageContent;
 }
 
-interface InlineQueryResultVoice extends InlineQueryResultBase {
+export interface InlineQueryResultVoice extends InlineQueryResultBase {
   type: "voice";
   voice_url: string;
   title: string;
@@ -866,7 +866,7 @@ interface InlineQueryResultVoice extends InlineQueryResultBase {
   input_message_content?: InputMessageContent;
 }
 
-interface InlineQueryResultDocument extends InlineQueryResultBase {
+export interface InlineQueryResultDocument extends InlineQueryResultBase {
   type: "document";
   title: string;
   caption?: string;
@@ -879,7 +879,7 @@ interface InlineQueryResultDocument extends InlineQueryResultBase {
   thumb_height?: number;
 }
 
-interface InlineQueryResultLocationBase extends InlineQueryResultBase {
+export interface InlineQueryResultLocationBase extends InlineQueryResultBase {
   latitude: number;
   longitude: number;
   title: string;
@@ -889,17 +889,17 @@ interface InlineQueryResultLocationBase extends InlineQueryResultBase {
   thumb_height?: number;
 }
 
-interface InlineQueryResultLocation extends InlineQueryResultLocationBase {
+export interface InlineQueryResultLocation extends InlineQueryResultLocationBase {
   type: "location";
 }
 
-interface InlineQueryResultVenue extends InlineQueryResultLocationBase {
+export interface InlineQueryResultVenue extends InlineQueryResultLocationBase {
   type: "venue";
   address: string;
   foursquare_id?: string;
 }
 
-interface InlineQueryResultContact extends InlineQueryResultBase {
+export interface InlineQueryResultContact extends InlineQueryResultBase {
   type: "contact";
   phone_number: string;
   first_name: string;
@@ -910,12 +910,12 @@ interface InlineQueryResultContact extends InlineQueryResultBase {
   thumb_height?: number;
 }
 
-interface InlineQueryResultGame extends InlineQueryResultBase {
+export interface InlineQueryResultGame extends InlineQueryResultBase {
   type: "game";
   game_short_name: string;
 }
 
-interface InlineQueryResultCachedPhoto extends InlineQueryResultBase {
+export interface InlineQueryResultCachedPhoto extends InlineQueryResultBase {
   type: "photo";
   photo_file_id: string;
   title?: string;
@@ -924,7 +924,7 @@ interface InlineQueryResultCachedPhoto extends InlineQueryResultBase {
   input_message_content?: InputMessageContent;
 }
 
-interface InlineQueryResultCachedGif extends InlineQueryResultBase {
+export interface InlineQueryResultCachedGif extends InlineQueryResultBase {
   type: "gif";
   gif_file_id: string;
   title?: string;
@@ -932,7 +932,7 @@ interface InlineQueryResultCachedGif extends InlineQueryResultBase {
   input_message_content?: InputMessageContent;
 }
 
-interface InlineQueryResultCachedMpeg4Gif extends InlineQueryResultBase {
+export interface InlineQueryResultCachedMpeg4Gif extends InlineQueryResultBase {
   type: "mpeg4_gif";
   mpeg4_file_id: string;
   title?: string;
@@ -940,13 +940,13 @@ interface InlineQueryResultCachedMpeg4Gif extends InlineQueryResultBase {
   input_message_content?: InputMessageContent;
 }
 
-interface InlineQueryResultCachedSticker extends InlineQueryResultBase {
+export interface InlineQueryResultCachedSticker extends InlineQueryResultBase {
   type: "sticker";
   sticker_file_id: string;
   input_message_content?: InputMessageContent;
 }
 
-interface InlineQueryResultCachedDocument extends InlineQueryResultBase {
+export interface InlineQueryResultCachedDocument extends InlineQueryResultBase {
   type: "document";
   title: string;
   document_file_id: string;
@@ -955,7 +955,7 @@ interface InlineQueryResultCachedDocument extends InlineQueryResultBase {
   input_message_content?: InputMessageContent;
 }
 
-interface InlineQueryResultCachedVideo extends InlineQueryResultBase {
+export interface InlineQueryResultCachedVideo extends InlineQueryResultBase {
   type: "video";
   video_file_id: string;
   title: string;
@@ -964,7 +964,7 @@ interface InlineQueryResultCachedVideo extends InlineQueryResultBase {
   input_message_content?: InputMessageContent;
 }
 
-interface InlineQueryResultCachedVoice extends InlineQueryResultBase {
+export interface InlineQueryResultCachedVoice extends InlineQueryResultBase {
   type: "voice";
   voice_file_id: string;
   title: string;
@@ -972,7 +972,7 @@ interface InlineQueryResultCachedVoice extends InlineQueryResultBase {
   input_message_content?: InputMessageContent;
 }
 
-interface InlineQueryResultCachedAudio extends InlineQueryResultBase {
+export interface InlineQueryResultCachedAudio extends InlineQueryResultBase {
   type: "audio";
   audio_file_id: string;
   caption?: string;
@@ -1003,30 +1003,30 @@ type InlineQueryResult =
 
 type InputMessageContent = object;
 
-interface InputTextMessageContent extends InputMessageContent {
+export interface InputTextMessageContent extends InputMessageContent {
   message_text: string;
   parse_mode?: ParseMode;
   disable_web_page_preview?: boolean;
 }
 
-interface InputLocationMessageContent extends InputMessageContent {
+export interface InputLocationMessageContent extends InputMessageContent {
   latitude: number;
   longitude: number;
 }
 
-interface InputVenueMessageContent extends InputLocationMessageContent {
+export interface InputVenueMessageContent extends InputLocationMessageContent {
   title: string;
   address: string;
   foursquare_id?: string;
 }
 
-interface InputContactMessageContent extends InputMessageContent {
+export interface InputContactMessageContent extends InputMessageContent {
   phone_number: string;
   first_name: string;
   last_name?: string;
 }
 
-interface ChosenInlineResult {
+export interface ChosenInlineResult {
   result_id: string;
   from: User;
   location?: Location;
@@ -1034,12 +1034,12 @@ interface ChosenInlineResult {
   query: string;
 }
 
-interface ResponseParameters {
+export interface ResponseParameters {
   migrate_to_chat_id?: number;
   retry_after?: number;
 }
 
-interface LabeledPrice {
+export interface LabeledPrice {
   label: string;
   amount: number;
 }
@@ -1052,7 +1052,7 @@ export interface Invoice {
   total_amount: number;
 }
 
-interface ShippingAddress {
+export interface ShippingAddress {
   country_code: string;
   state: string;
   city: string;
@@ -1061,24 +1061,24 @@ interface ShippingAddress {
   post_code: string;
 }
 
-interface OrderInfo {
+export interface OrderInfo {
   name?: string;
   phone_number?: string;
   email?: string;
   shipping_address?: ShippingAddress;
 }
 
-interface MessageAutoDeleteTimerChanged {
+export interface MessageAutoDeleteTimerChanged {
   message_auto_delete_time: number
 }
 
-interface ShippingOption {
+export interface ShippingOption {
   id: string;
   title: string;
   prices: LabeledPrice[];
 }
 
-interface SuccessfulPayment {
+export interface SuccessfulPayment {
   currency: string;
   total_amount: number;
   invoice_payload: string;
@@ -1088,14 +1088,14 @@ interface SuccessfulPayment {
   provider_payment_charge_id: string;
 }
 
-interface ShippingQuery {
+export interface ShippingQuery {
   id: string;
   from: User;
   invoice_payload: string;
   shipping_address: ShippingAddress;
 }
 
-interface PreCheckoutQuery {
+export interface PreCheckoutQuery {
   id: string;
   from: User;
   currency: string;
@@ -1105,7 +1105,7 @@ interface PreCheckoutQuery {
   order_info?: OrderInfo;
 }
 
-interface ChatMemberUpdated {
+export interface ChatMemberUpdated {
   chat: Chat
   from: User
   date: number
