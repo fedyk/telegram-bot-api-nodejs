@@ -255,6 +255,8 @@ export interface Update {
   my_chat_member?: ChatMemberUpdated
   chat_member?: ChatMemberUpdated
   chat_join_request?: ChatJoinRequest
+  chat_boost?: ChatBoostUpdated
+  removed_chat_boost?: ChatBoostRemoved
 }
 
 export interface WebhookInfo {
@@ -297,6 +299,10 @@ export interface Chat {
   permissions?: ChatPermissions;
   can_set_sticker_set?: boolean;
   sticker_set_name?: string;
+}
+
+export interface ChatBoostAdded {
+  boost_count: number
 }
 
 export interface ForumTopicCreated {
@@ -395,6 +401,7 @@ export interface Message {
   passport_data?: PassportData;
   reply_markup?: InlineKeyboardMarkup;
   sender_chat?: Chat
+  boost_added?: ChatBoostAdded
   forum_topic_created?: ForumTopicCreated
   forum_topic_edited?: ForumTopicEdited
   forum_topic_closed?: ForumTopicClosed
@@ -406,6 +413,45 @@ export interface Message {
   video_chat_ended: VideoChatEnded
   video_chat_participants_invited: VideoChatParticipantsInvited
 }
+
+export type ChatBoostSource = ChatBoostSourcePremium | ChatBoostSourceGiftCode | ChatBoostSourceGiveaway;
+
+export interface ChatBoostSourcePremium {
+  source: "premium";
+  user: User;
+}
+
+export interface ChatBoostSourceGiftCode {
+  source: "gift_code";
+  user: User;
+}
+
+export interface ChatBoostSourceGiveaway {
+  source: "giveaway";
+  giveaway_message_id: number;
+  user?: User;
+  is_unclaimed?: boolean;
+}
+
+export interface ChatBoost {
+  boost_id: string
+  add_date: number
+  expiration_date: number
+  source: ChatBoostSource
+}
+
+export interface ChatBoostUpdated {
+  chat: Chat
+  boost: ChatBoost
+}
+
+export interface ChatBoostRemoved {
+  chat: Chat
+  boost_id: string
+  remove_date: number
+  source: ChatBoostSource
+}
+
 
 export interface BusinessConnection {
   id: string
