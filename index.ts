@@ -1324,6 +1324,18 @@ export function editMessageText(token: string, payload: EditMessageTextOptions, 
   }).then(parseResponse<Message>)
 }
 
+export function deleteMessage(token: string, payload: {
+  chat_id: string | number
+  message_id: number
+}, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/deleteMessage`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
+    signal
+  }).then(parseResponse<{}>)
+}
+
 export function sendPhoto(token: string, payload: SendBasicOptions & {
   photo: string
   caption?: string
