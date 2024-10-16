@@ -301,6 +301,12 @@ export interface Chat {
   sticker_set_name?: string;
 }
 
+export interface WriteAccessAllowed {
+  from_request?: boolean
+  web_app_name?: string
+  from_attachment_menu?: boolean
+}
+
 export interface ChatBoostAdded {
   boost_count: number
 }
@@ -401,6 +407,7 @@ export interface Message {
   passport_data?: PassportData;
   reply_markup?: InlineKeyboardMarkup;
   sender_chat?: Chat
+  write_access_allowed: WriteAccessAllowed
   boost_added?: ChatBoostAdded
   forum_topic_created?: ForumTopicCreated
   forum_topic_edited?: ForumTopicEdited
