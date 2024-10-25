@@ -1951,6 +1951,10 @@ export function isTooManyRequestsError(err: unknown): boolean {
   return err instanceof Error && err.message.includes("Too Many Requests: retry after")
 }
 
+export function isMessageTooLongError(err: unknown): boolean {
+  return err instanceof Error && err.message.includes("message is too long")
+}
+
 export function parseRetryAfterTime(err: unknown): number {
   if (!(err instanceof Error)) {
     throw new RangeError("`err` needs to be an Error")
@@ -2059,7 +2063,6 @@ export namespace currencies {
 
     return value
   }
-
 
   function loadCurrencies(): Record<string, Currency> {
     return JSON.parse(readFileSync(`${__dirname}/currencies.json`, {
