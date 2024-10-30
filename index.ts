@@ -1955,6 +1955,10 @@ export function isMessageTooLongError(err: unknown): boolean {
   return err instanceof Error && err.message.includes("message is too long")
 }
 
+export function isMessageCaptionTooLongError(err: unknown): boolean {
+  return err instanceof Error && err.message.includes("message caption is too long")
+}
+
 export function parseRetryAfterTime(err: unknown): number {
   if (!(err instanceof Error)) {
     throw new RangeError("`err` needs to be an Error")
