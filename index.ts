@@ -1959,6 +1959,16 @@ export function isMessageCaptionTooLongError(err: unknown): boolean {
   return err instanceof Error && err.message.includes("message caption is too long")
 }
 
+export function isWebpageCurlFailedError(err: unknown) {
+  return err instanceof Error && err.message.includes("WEBPAGE_CURL_FAILED")
+}
+
+export function isWrongFileUrlError(err: unknown) {
+  return err instanceof Error && err.message.includes("Wrong file identifier/HTTP URL specified")
+}
+
+
+
 export function parseRetryAfterTime(err: unknown): number {
   if (!(err instanceof Error)) {
     throw new RangeError("`err` needs to be an Error")
