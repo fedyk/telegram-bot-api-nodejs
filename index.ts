@@ -1885,7 +1885,10 @@ export function parseResponse<T>(response: Response) {
 
     const error_code = Number(data.error_code ?? 0)
     const description = String(data.description ?? "")
-    const parameters = data.parameters || {}
+    const parameters = Object.assign(data.parameters || {}, {
+      text,
+      url: response.url.replace(/bot[\d]+\:[^\/]+/ig, "*")
+    })
 
     throw new TelegramError(description, error_code, parameters)
   })
@@ -1966,8 +1969,6 @@ export function isWebpageCurlFailedError(err: unknown) {
 export function isWrongFileUrlError(err: unknown) {
   return err instanceof Error && err.message.includes("Wrong file identifier/HTTP URL specified")
 }
-
-
 
 export function parseRetryAfterTime(err: unknown): number {
   if (!(err instanceof Error)) {
