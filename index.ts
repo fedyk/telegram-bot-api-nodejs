@@ -1887,7 +1887,7 @@ export function parseResponse<T>(response: Response) {
     const description = String(data.description ?? "")
     const parameters = Object.assign(data.parameters || {}, {
       text,
-      url: response.url.replace(/bot[\d]+\:[^\/]+/ig, "*")
+      url: removeTokenFromUrl(response.url)
     })
 
     throw new TelegramError(description, error_code, parameters)
@@ -2018,6 +2018,12 @@ export function resolveChatName(chat: any) {
   return `${chat.first_name || ""} ${chat.last_name || ""}`.trim() ||
     `${chat.title}`.trim() ||
     `@${chat.username || ""}`.trim()
+}
+
+export function removeTokenFromUrl(url: string) {
+  return String(url).replace(/bot([\d]+)\:([^\/]+)/ig, function (match, botId, token) {
+    return `bot${botId}:${"*".repeat(token.length)}`
+  })
 }
 
 export namespace currencies {

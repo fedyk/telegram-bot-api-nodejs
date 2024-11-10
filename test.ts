@@ -1,6 +1,6 @@
 import { describe, it } from "node:test"
 import { ok, deepEqual, equal } from "node:assert/strict"
-import { TelegramError, currencies, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime } from "./index.js"
+import { TelegramError, currencies, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime, removeTokenFromUrl } from "./index.js"
 
 describe("TelegramError", function () {
   it("should except additional details", function () {
@@ -41,14 +41,15 @@ describe(parseResponse.name, function () {
   })
 
   it("should parse error response and throw an exception", function (ctx, done) {
-    const response = new Response(JSON.stringify({
+    const body = JSON.stringify({
       ok: false,
       error_code: 400,
       description: "Bad Request: group chat was migrated to a supergroup chat",
       parameters: {
         migrate_to_chat_id: -123456789
       }
-    }), {
+    })
+    const response = new Response(body, {
       status: 400,
       statusText: "Error",
     })
@@ -65,7 +66,9 @@ describe(parseResponse.name, function () {
         equal(err.message, "Bad Request: group chat was migrated to a supergroup chat")
         equal(err.status, 400)
         deepEqual(err.data, {
-          migrate_to_chat_id: -123456789
+          migrate_to_chat_id: -123456789,
+          text: body,
+          url: "",
         })
       })
       .finally(done)
@@ -96,5 +99,15 @@ describe(currencies.formatPrice.name, function () {
     equal(currencies.formatPrice(100, "EUR"), "1 €")
     equal(currencies.formatPrice(123, "EUR"), "1.23 €")
     equal(currencies.formatPrice(123, "PLN"), "1.23 zł")
+  })
+})
+
+describe(removeTokenFromUrl.name, function () {
+  it("should remove sensetive token from URL", function () {
+    equal(removeTokenFromUrl(""), "")
+    equal(
+      removeTokenFromUrl("https://api.telegram.org/bot123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11/getMe"),
+      "https://api.telegram.org/bot123456:**********************************/getMe"
+    )
   })
 })
