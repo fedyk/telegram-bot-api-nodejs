@@ -1456,6 +1456,17 @@ export function answerCallbackQuery(token: string, payload: AnswerCallbackQueryO
   }).then(parseResponse<File>)
 }
 
+export function leaveChat(token: string, payload: {
+  chat_id: string
+}, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/leaveChat`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
+    signal
+  }).then(parseResponse<true>)
+}
+
 export function getChat(token: string, payload: {
   chat_id: string
 }, signal: AbortSignal) {
