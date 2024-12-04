@@ -1981,6 +1981,10 @@ export function isWrongFileUrlError(err: unknown) {
   return err instanceof Error && err.message.includes("Wrong file identifier/HTTP URL specified")
 }
 
+export function isBadGatewayError(err: unknown) {
+  return err instanceof Error && err.message === "Bad Gateway"
+}
+
 export function parseRetryAfterTime(err: unknown): number {
   if (!(err instanceof Error)) {
     throw new RangeError("`err` needs to be an Error")
