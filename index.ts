@@ -1920,6 +1920,18 @@ export class TelegramError extends Error {
 /**
  * Helpers
  */
+
+export function fetch(url: string, param?: RequestInit) {
+  const start = Date.now()
+
+  return global.fetch(url, param).catch(function (err) {
+    throw new TelegramError(err.message, -1, {
+      url: removeTokenFromUrl(url),
+      duration: Date.now() - start
+    })
+  })
+}
+
 export const SUPPORTED_REACTION_EMOJI = ["👍", "👎", "\u2764\ufe0f" // red heart
   , "🔥", "🥰", "👏", "😁", "🤔", "🤯", "😱", "🤬", "😢"
   , "🎉", "🤩", "🤮", "💩", "🙏", "👌", "🕊", "🤡", "🥱", "🥴", "😍", "🐳", "❤‍🔥"
