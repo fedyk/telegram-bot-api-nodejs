@@ -1909,8 +1909,8 @@ export class TelegramError extends Error {
   status: number
   data: Record<string, any>
 
-  constructor(message: string, status: number, data: Record<string, any> = {}) {
-    super(message)
+  constructor(message: string, status: number, data: Record<string, any> = {}, options?: ErrorOptions) {
+    super(message, options)
 
     this.status = status
     this.data = data
@@ -1924,11 +1924,14 @@ export class TelegramError extends Error {
 export function fetch(url: string, param?: RequestInit) {
   const start = Date.now()
 
-  return global.fetch(url, param).catch(function (err) {
-    throw new TelegramError(err.message, -1, {
+  return global.fetch(url, param).catch(function (cause) {
+    const status = 0
+    const data = {
       url: removeTokenFromUrl(url),
       duration: Date.now() - start
-    })
+    }
+
+    throw new TelegramError(cause.message, status, data, {  cause })
   })
 }
 
