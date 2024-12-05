@@ -15,10 +15,9 @@
     "README.md"
   ],
   "scripts": {
-    "prepublishOnly": "npm run build && node --test",
+    "prepublishOnly": "npm run build && npm run test && npm run spec",
     "build": "tsc",
     "watch": "tsc --watch",
-    "pretest": "npm run build",
     "test": "node --test",
     "spec": "node --test spec.js"
   },
