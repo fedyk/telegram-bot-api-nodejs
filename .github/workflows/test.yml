@@ -17,3 +17,5 @@ jobs:
     - run: npm run build
     - run: npm run test
     - run: npm run spec
+      env:
+        TOKEN: ${{ secrets.TOKEN }}
