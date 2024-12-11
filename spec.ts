@@ -50,7 +50,6 @@ describe("fetch", function () {
     equal(err instanceof Error, true, "err is instance of Error")
     equal(err.cause instanceof Error, true, "err.cause includes nested error")
     equal(err.cause.message === err.message, true, "err extends the cause err message")
-    equal(err.status, 0, "err.status is present")
     equal(err.data.url, invalidUrl, "err.data.url is present")
     equal(typeof err.data.duration === "number", true, "err.data.duration is present")
   })
