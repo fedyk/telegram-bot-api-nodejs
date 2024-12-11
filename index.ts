@@ -1925,15 +1925,22 @@ export function fetch(url: string, param?: RequestInit) {
   const start = Date.now()
 
   return global.fetch(url, param).catch(function (cause) {
-    const status = 0
-    const data = {
+    throw new TelegramFetchDebugError(cause.message, { cause }, {
       url: removeTokenFromUrl(url),
       duration: Date.now() - start
-    }
-
-    throw new TelegramError(cause.message, status, data, {  cause })
+    })
   })
 }
+
+class TelegramFetchDebugError extends Error {
+  data: unknown
+
+  constructor(message: string, options: ErrorOptions, data: unknown) {
+    super(message, options)
+    this.data = data
+  }
+}
+
 
 export const SUPPORTED_REACTION_EMOJI = ["👍", "👎", "\u2764\ufe0f" // red heart
   , "🔥", "🥰", "👏", "😁", "🤔", "🤯", "😱", "🤬", "😢"
