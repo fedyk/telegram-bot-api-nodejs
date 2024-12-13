@@ -18,10 +18,9 @@ jobs:
     - run: npm run sync
     - name: git diff
       id: check_changes
-      run: git diff --quiet || echo "Changes detected"
-      continue-on-error: true
+      run: git diff --quiet || echo "::set-output name=changes_detected::true"
     - name: sync
-      if: ${{ failure() && steps.check_changes.outcome == 'failure' }}
+      if: steps.check_changes.outputs.changes_detected == 'true'
       run: |
         npm run test
         npm run spec
