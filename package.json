@@ -19,7 +19,8 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "node --test",
-    "spec": "node --test spec.js"
+    "spec": "node --test spec.js",
+    "sync": "wget -O currencies.json https://core.telegram.org/bots/payments/currencies.json"
   },
   "author": "",
   "license": "ISC",
