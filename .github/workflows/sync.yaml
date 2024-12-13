@@ -8,7 +8,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -17,9 +16,11 @@ jobs:
     - run: npm ci
     - run: npm run build
     - run: npm run sync
-    - id: check_changes # 0 - ok, 1 - fail; 0 - no diff; 1 - diff
+    - name: git diff
+      continue-on-error: true
       run: git diff --exit-code
-    - if: steps.check_changes.outcome == 'failure'
+    - name: sync
+      if: ${{ failure() }}
       run: |
         npm run test
         npm run spec
