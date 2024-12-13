@@ -6,7 +6,7 @@ on:
     - cron: "0 7 * * *"
 
 jobs:
-  test:
+  sync:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -18,7 +18,7 @@ jobs:
     - run: npm run sync
     - name: git diff
       id: check_changes
-      run: git diff --exit-code
+      run: git diff --quiet || echo "Changes detected"
       continue-on-error: true
     - name: sync
       if: ${{ failure() && steps.check_changes.outcome == 'failure' }}
