@@ -2007,6 +2007,14 @@ export function isBadGatewayError(err: unknown) {
   return err instanceof Error && err.message === "Bad Gateway"
 }
 
+export function isMessageToEditNotFoundError(err: unknown) {
+  return err instanceof Error && err.message === "Bad Request: message to edit not found"
+}
+
+export function isMessageNotModifiedError(err: unknown) {
+  return err instanceof Error && err.message.startsWith("Bad Request: message is not modified")
+}
+
 export function parseRetryAfterTime(err: unknown): number {
   if (!(err instanceof Error)) {
     throw new RangeError("`err` needs to be an Error")

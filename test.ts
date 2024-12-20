@@ -1,6 +1,6 @@
-import { describe, it } from "node:test"
+import test, { describe, it } from "node:test"
 import { ok, deepEqual, equal } from "node:assert/strict"
-import { TelegramError, currencies, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime, removeTokenFromUrl } from "./index.js"
+import { TelegramError, currencies, isMessageNotModifiedError, isMessageToEditNotFoundError, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime, removeTokenFromUrl } from "./index.js"
 
 describe("TelegramError", function () {
   it("should except additional details", function () {
@@ -87,10 +87,28 @@ describe(isTooManyRequestsError.name, function () {
   })
 })
 
-describe(parseRetryAfterTime.name, function () {
-  it("parse the time in Too Many Requests error", function () {
-    equal(parseRetryAfterTime(new Error("Too Many Requests: retry after 39")), 39)
-  })
+test(isMessageToEditNotFoundError.name, function () {
+  equal(isMessageToEditNotFoundError(new Error("Test")), false)
+  equal(isMessageToEditNotFoundError(new Error("Bad Request: message to edit not found")), true)
+})
+
+test(isMessageNotModifiedError.name, function () {
+  equal(
+    isMessageNotModifiedError(new Error("Test")),
+    false
+  )
+  equal(
+    isMessageNotModifiedError(new Error("Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a specified new message content and reply markup are exactly the same as a current content and reply markup of the message")),
+    true
+  )
+  equal(
+    isMessageNotModifiedError(new Error("Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message")),
+    true
+  )
+})
+
+test(parseRetryAfterTime.name, function () {
+  equal(parseRetryAfterTime(new Error("Too Many Requests: retry after 39")), 39)
 })
 
 describe(currencies.formatPrice.name, function () {
