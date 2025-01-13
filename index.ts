@@ -490,6 +490,7 @@ export interface MessageReactionUpdated {
  */
 export type ReactionType = ReactionTypeEmoji
   | ReactionTypeCustomEmoji
+  | ReactionTypePaid
 
 /**
  * @see https://core.telegram.org/bots/api#reactiontypeemoji
@@ -505,6 +506,10 @@ export interface ReactionTypeEmoji {
 export interface ReactionTypeCustomEmoji {
   type: "custom_emoji"
   custom_emoji_id: string
+}
+
+export interface ReactionTypePaid {
+  type: "paid"
 }
 
 /**
@@ -1843,6 +1848,12 @@ function parseReaction(reaction: ReactionType): ReactionType {
     return {
       type: "custom_emoji",
       custom_emoji_id: String(reaction.custom_emoji_id),
+    }
+  }
+
+  if (reaction.type === "paid") {
+    return {
+      type: "paid"
     }
   }
 
