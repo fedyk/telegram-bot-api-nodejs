@@ -64,6 +64,7 @@ type MessageEntityType = "mention"
   | "pre"
   | "text_link"
   | "text_mention"
+  | "custom_emoji"
 
 type ParseMode = "Markdown"
   | "MarkdownV2"
@@ -536,6 +537,7 @@ export interface MessageEntity {
   length: number;
   url?: string;
   user?: User;
+  custom_emoji_id?: string
 }
 
 export interface FileBase {
