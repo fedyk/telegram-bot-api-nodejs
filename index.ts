@@ -1568,50 +1568,25 @@ export function parseUpdate(update: any): Update {
 function parseMessage(m: any): Message {
   return {
     ...m,
-    message_id: Number(m.message_id),
     from: m.from ? parseUser(m.from) : void 0,
-    date: Number(m.date),
     chat: parseChat(m.chat),
-    text: String(m.text ?? ""),
     forward_from: m.forward_from ? parseUser(m.forward_from) : void 0, // User;
     forward_from_chat: m.forward_from_chat ? parseChat(m.forward_from_chat) : void 0, // Chat;
-    forward_from_message_id: m.forward_from_message_id ? Number(m.forward_from_message_id) : void 0, // number;
-    forward_signature: m.forward_signature ? String(m.forward_signature) : void 0, // string;
-    forward_sender_name: m.forward_sender_name ? String(m.forward_sender_name) : void 0, // string;
     forward_date: m.forward_date ? Number(m.forward_date) : void 0, // number;
     reply_to_message: m.reply_to_message ? parseMessage(m.reply_to_message) : void 0,
-    is_automatic_forward: m.is_automatic_forward != null ? Boolean(m.is_automatic_forward) : void 0,
-    edit_date: m.edit_date ? Number(m.edit_date) : void 0, // number;
-    media_group_id: m.media_group_id ? String(m.media_group_id) : void 0, // string;
-    author_signature: m.author_signature ? String(m.author_signature) : void 0, // string;
     entities: m.entities ? parseEntities(m.entities) : void 0, // MessageEntity[];
-    // caption_entities: m.caption_entities ? parseSometh(m.caption_entities) : void 0, // MessageEntity[];
     audio: m.audio ? parseAudio(m.audio) : void 0,
     document: m.document ? parseDocument(m.document) : void 0,
     animation: m.animation ? parseAnimation(m.animation) : void 0,
-    // game?: Game;
     photo: m.photo ? parsePhotoSizes(m.photo) : void 0,
     sticker: m.sticker ? parseSticker(m.sticker) : void 0,
     video: m.video ? parseVideo(m.video) : void 0,
     voice: m.voice ? parseVoice(m.voice) : void 0,
     video_note: m.video_note ? parseVideoNote(m.video_note) : void 0,
-    caption: m.caption ? String(m.caption) : void 0,
     contact: m.contact ? parseContact(m.contact) : void 0,
     location: m.location ? parseLocation(m.location) : void 0,
     venue: m.venue ? parseVenue(m.venue) : void 0,
     poll: m.poll ? parsePoll(m.poll) : void 0,
-    // delete_chat_photo?: boolean;
-    // group_chat_created?: boolean;
-    // supergroup_chat_created?: boolean;
-    // channel_chat_created?: boolean;
-    // migrate_to_chat_id?: number;
-    // migrate_from_chat_id?: number;
-    // pinned_message?: Message;
-    // invoice?: Invoice;
-    // successful_payment?: SuccessfulPayment;
-    // connected_website?: string;
-    // passport_data?: PassportData;
-    // reply_markup?: InlineKeyboardMarkup;
     sender_chat: m.sender_chat ? parseChat(m.sender_chat) : void 0,
   }
 }
