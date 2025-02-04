@@ -2005,6 +2005,26 @@ export function isMessageNotModifiedError(err: unknown) {
   return err instanceof Error && err.message.startsWith("Bad Request: message is not modified")
 }
 
+// Bad Request: wrong type of the web page content
+export function isWrongTypeOfTheWebPageContentError(err: unknown) {
+  return err instanceof Error && err.message.includes("wrong type of the web page content")
+}
+
+// Bad Request: failed to get http url content
+export function isFailToGetHTTPURLContentError(err: unknown) {
+  return err instanceof Error && err.message.includes("failed to get http url content")
+}
+
+// Bad Request: wrong file identifier/HTTP URL specified
+export function isWrongFileIdentifierError(err: unknown) {
+  return err instanceof Error && err.message.includes("wrong file identifier/HTTP URL specified")
+}
+
+// Bad Request: invalid file HTTP URL specified: Unsupported URL protocol
+export function isInvalidFileUrlSpecifiedError(err: unknown) {
+  return err instanceof Error && err.message.includes("invalid file HTTP URL specified: Unsupported URL protocol")
+}
+
 export function parseRetryAfterTime(err: unknown): number {
   if (!(err instanceof Error)) {
     throw new RangeError("`err` needs to be an Error")
