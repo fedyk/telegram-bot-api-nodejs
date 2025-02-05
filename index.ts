@@ -2010,9 +2010,9 @@ export function isWrongTypeOfTheWebPageContentError(err: unknown) {
   return err instanceof Error && err.message.includes("wrong type of the web page content")
 }
 
-// Bad Request: failed to get http url content
+// Bad Request: failed to get HTTP URL content
 export function isFailToGetHTTPURLContentError(err: unknown) {
-  return err instanceof Error && err.message.includes("failed to get http url content")
+  return err instanceof Error && err.message.includes("failed to get HTTP URL content")
 }
 
 // Bad Request: wrong file identifier/HTTP URL specified

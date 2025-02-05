@@ -1,6 +1,7 @@
 import test, { describe, it } from "node:test"
 import { ok, deepEqual, equal } from "node:assert/strict"
-import { TelegramError, currencies, isMessageNotModifiedError, isMessageToEditNotFoundError, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime, removeTokenFromUrl } from "./index.js"
+import { TelegramError, currencies, isFailToGetHTTPURLContentError, isMessageNotModifiedError, isMessageToEditNotFoundError, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime, removeTokenFromUrl } from "./index.js"
+import { assert } from "node:console"
 
 describe("TelegramError", function () {
   it("should except additional details", function () {
@@ -128,4 +129,9 @@ describe(removeTokenFromUrl.name, function () {
       "https://api.telegram.org/bot123456:**********************************/getMe"
     )
   })
+})
+
+test(isFailToGetHTTPURLContentError.name, function() {
+  equal(isFailToGetHTTPURLContentError(new Error("Bad Request: failed to get HTTP URL content")), true)
+  equal(isFailToGetHTTPURLContentError(new Error("Bad Request: failed to get TEXT content")), false)
 })
