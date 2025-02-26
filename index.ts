@@ -408,7 +408,7 @@ export interface Message {
   passport_data?: PassportData;
   reply_markup?: InlineKeyboardMarkup;
   sender_chat?: Chat
-  write_access_allowed: WriteAccessAllowed
+  write_access_allowed?: WriteAccessAllowed
   boost_added?: ChatBoostAdded
   forum_topic_created?: ForumTopicCreated
   forum_topic_edited?: ForumTopicEdited
