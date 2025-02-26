@@ -398,7 +398,7 @@ export interface Message {
   group_chat_created?: boolean;
   supergroup_chat_created?: boolean;
   channel_chat_created?: boolean;
-  message_auto_delete_timer_changed: MessageAutoDeleteTimerChanged
+  message_auto_delete_timer_changed?: MessageAutoDeleteTimerChanged
   migrate_to_chat_id?: number;
   migrate_from_chat_id?: number;
   pinned_message?: Message;
@@ -416,10 +416,10 @@ export interface Message {
   forum_topic_reopened?: ForumTopicReopened
   general_forum_topic_hidden?: GeneralForumTopicHidden
   general_forum_topic_unhidden?: GeneralForumTopicUnhidden
-  video_chat_scheduled: VideoChatScheduled
-  video_chat_started: VideoChatStarted
-  video_chat_ended: VideoChatEnded
-  video_chat_participants_invited: VideoChatParticipantsInvited
+  video_chat_scheduled?: VideoChatScheduled
+  video_chat_started?: VideoChatStarted
+  video_chat_ended?: VideoChatEnded
+  video_chat_participants_invited?: VideoChatParticipantsInvited
 }
 
 export type ChatBoostSource = ChatBoostSourcePremium | ChatBoostSourceGiftCode | ChatBoostSourceGiveaway;
