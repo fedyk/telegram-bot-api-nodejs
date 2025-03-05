@@ -2079,6 +2079,24 @@ export function resolveChatName(chat: any) {
     `@${chat.username || ""}`.trim()
 }
 
+export function resolveMessageOriginName(messageOrigin: MessageOrigin) {
+  if (messageOrigin.type === "channel") {
+    return resolveChatName(messageOrigin.chat)
+  }
+
+  if (messageOrigin.type === "user") {
+    return resolveChatName(messageOrigin.sender_user)
+  }
+
+  if (messageOrigin.type === "chat") {
+    return resolveChatName(messageOrigin.sender_chat)
+  }
+
+  if (messageOrigin.type === "hidden_user") {
+    return messageOrigin.sender_user_name || "Hidden User"
+  }
+}
+
 export function removeTokenFromUrl(url: string) {
   return String(url).replace(/bot([\d]+)\:([^\/]+)/ig, function (match, botId, token) {
     return `bot${botId}:${"*".repeat(token.length)}`
