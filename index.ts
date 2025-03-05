@@ -331,6 +331,18 @@ export interface GeneralForumTopicHidden { }
 
 export interface GeneralForumTopicUnhidden { }
 
+export interface Giveaway {
+  chats: Chat[]
+  winners_selection_date: number
+  winner_count: number
+  only_new_members?: true
+  has_public_winners?: true
+  prize_description?: string
+  country_codes?: string[]
+  prize_star_count?: number
+  premium_subscription_month_count?: number
+}
+
 export interface VideoChatScheduled {
   start_date: number;
 }
@@ -357,12 +369,6 @@ export interface Message {
   business_connection_id?: string
   chat: Chat
   via_bot?: User
-  forward_from?: User;
-  forward_from_chat?: Chat;
-  forward_from_message_id?: number;
-  forward_signature?: string;
-  forward_sender_name?: string;
-  forward_date?: number;
   forward_origin?: MessageOrigin
   is_topic_message?: boolean
   is_automatic_forward?: boolean
@@ -416,6 +422,7 @@ export interface Message {
   forum_topic_reopened?: ForumTopicReopened
   general_forum_topic_hidden?: GeneralForumTopicHidden
   general_forum_topic_unhidden?: GeneralForumTopicUnhidden
+  giveaway?: Giveaway
   video_chat_scheduled?: VideoChatScheduled
   video_chat_started?: VideoChatStarted
   video_chat_ended?: VideoChatEnded
@@ -1570,9 +1577,6 @@ function parseMessage(m: any): Message {
     ...m,
     from: m.from ? parseUser(m.from) : void 0,
     chat: parseChat(m.chat),
-    forward_from: m.forward_from ? parseUser(m.forward_from) : void 0, // User;
-    forward_from_chat: m.forward_from_chat ? parseChat(m.forward_from_chat) : void 0, // Chat;
-    forward_date: m.forward_date ? Number(m.forward_date) : void 0, // number;
     reply_to_message: m.reply_to_message ? parseMessage(m.reply_to_message) : void 0,
     entities: m.entities ? parseEntities(m.entities) : void 0, // MessageEntity[];
     audio: m.audio ? parseAudio(m.audio) : void 0,
