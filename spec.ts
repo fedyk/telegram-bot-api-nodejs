@@ -26,7 +26,7 @@ describe("getMe", function () {
   test("should get bot info", async function (ctx) {
     const me = await getMe(token, ctx.signal)
 
-    equal(token.startsWith(me.id), true, "token should starts with bot id")
+    equal(token.startsWith(me.id.toString()), true, "token should starts with bot id")
     equal(me.is_bot, true, "the response should have `is_bot` property")
     equal(typeof me.username === "string", true, "the response should have `username` property")
   })
