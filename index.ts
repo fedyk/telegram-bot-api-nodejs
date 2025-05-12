@@ -271,12 +271,12 @@ export interface WebhookInfo {
 }
 
 export interface User {
-  id: string;
-  is_bot: boolean;
-  first_name: string;
-  last_name?: string;
-  username?: string;
-  language_code?: string;
+  id: number
+  is_bot: boolean
+  first_name: string
+  last_name?: string
+  username?: string
+  language_code?: string
   is_premium: boolean
   can_join_groups?: boolean
   can_read_all_group_messages?: boolean
@@ -285,7 +285,7 @@ export interface User {
 }
 
 export interface Chat {
-  id: number;
+  id: number
   type: ChatType;
   title?: string;
   username?: string;
@@ -1370,6 +1370,19 @@ export function sendPhoto(token: string, payload: SendBasicOptions & {
   }).then(parseResponse<Message>)
 }
 
+export function sendAudio(token: string, payload: SendBasicOptions & {
+  audio: string
+  caption?: string
+  parse_mode?: ParseMode
+}, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/sendAudio`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
+    signal
+  }).then(parseResponse<Message>)
+}
+
 export function sendAnimation(token: string, payload: SendAnimationOptions, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/sendAnimation`, {
     method: "POST",
@@ -1410,6 +1423,19 @@ export function sendDocument(token: string, payload: SendDocumentOptions | FormD
     method: "POST",
     body: b,
     headers: h,
+    signal
+  }).then(parseResponse<Message>)
+}
+
+export function sendVoice(token: string, payload: SendBasicOptions & {
+  voice: string
+  caption?: string
+  parse_mode?: ParseMode
+}, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/sendVoice`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
     signal
   }).then(parseResponse<Message>)
 }
@@ -1596,26 +1622,11 @@ function parseMessage(m: any): Message {
 }
 
 function parseUser(u: User): User {
-  return {
-    id: String(u.id),
-    is_bot: Boolean(u.is_bot),
-    first_name: String(u.first_name),
-    last_name: String(u.last_name ?? ""),
-    username: String(u.username ?? ""),
-    language_code: String(u.language_code ?? ""),
-    is_premium: Boolean(u.is_premium ?? ""),
-  }
+  return u
 }
 
 function parseChat(c: Chat) {
-  return {
-    id: Number(c.id),
-    type: c.type,
-    title: String(c.title ?? ""),
-    username: String(c.username ?? ""),
-    first_name: String(c.first_name ?? ""),
-    last_name: String(c.last_name ?? ""),
-  }
+  return c
 }
 
 function parsePhotoSizes(p: PhotoSize[]) {
