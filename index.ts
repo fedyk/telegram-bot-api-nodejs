@@ -1427,6 +1427,19 @@ export function sendDocument(token: string, payload: SendDocumentOptions | FormD
   }).then(parseResponse<Message>)
 }
 
+export function sendVideo(token: string, payload: SendBasicOptions & {
+  video: string
+  caption?: string
+  parse_mode?: ParseMode
+}, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/sendVideo`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
+    signal
+  }).then(parseResponse<Message>)
+}
+
 export function sendVoice(token: string, payload: SendBasicOptions & {
   voice: string
   caption?: string
