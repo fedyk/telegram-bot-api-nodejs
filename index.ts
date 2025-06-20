@@ -344,10 +344,18 @@ export interface Giveaway {
 }
 
 export interface GiveawayWinners {
-  winner_count?: number
+  chat: Chat
+  giveaway_message_id: number
+  winners_selection_date: number // Unix timestamp
+  winner_count: number
+  winners: User[]
+  additional_chat_count?: number
   prize_star_count?: number
+  premium_subscription_month_count?: number
+  unclaimed_prize_count?: number
+  only_new_members?: boolean
+  was_refunded?: boolean
   prize_description?: string
-  winners_selection_date?: string
 }
 
 export interface VideoChatScheduled {
