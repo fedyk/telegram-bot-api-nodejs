@@ -343,6 +343,13 @@ export interface Giveaway {
   premium_subscription_month_count?: number
 }
 
+export interface GiveawayWinners {
+  winner_count?: number
+  prize_star_count?: number
+  prize_description?: string
+  winners_selection_date?: string
+}
+
 export interface VideoChatScheduled {
   start_date: number;
 }
@@ -423,6 +430,7 @@ export interface Message {
   general_forum_topic_hidden?: GeneralForumTopicHidden
   general_forum_topic_unhidden?: GeneralForumTopicUnhidden
   giveaway?: Giveaway
+  giveaway_winners?: GiveawayWinners
   video_chat_scheduled?: VideoChatScheduled
   video_chat_started?: VideoChatStarted
   video_chat_ended?: VideoChatEnded
