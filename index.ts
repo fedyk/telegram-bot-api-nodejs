@@ -358,6 +358,17 @@ export interface GiveawayWinners {
   prize_description?: string
 }
 
+export interface GiveawayCompleted {
+  winner_count: number
+  unclaimed_prize_count?: number
+  giveaway_message?: Message
+  is_star_giveaway?: boolean
+}
+
+export interface PaidMessagePriceChanged {
+  paid_message_star_count: number
+}
+
 export interface VideoChatScheduled {
   start_date: number;
 }
@@ -439,6 +450,8 @@ export interface Message {
   general_forum_topic_unhidden?: GeneralForumTopicUnhidden
   giveaway?: Giveaway
   giveaway_winners?: GiveawayWinners
+  giveaway_completed: GiveawayCompleted
+  paid_message_price_changed: PaidMessagePriceChanged
   video_chat_scheduled?: VideoChatScheduled
   video_chat_started?: VideoChatStarted
   video_chat_ended?: VideoChatEnded
