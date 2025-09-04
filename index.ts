@@ -82,6 +82,7 @@ export interface SendBasicOptions {
   chat_id: number | string
   business_connection_id?: string
   message_thread_id?: number
+  direct_messages_topic_id?: number
   disable_notification?: boolean;
   reply_to_message_id?: number | string;
   reply_markup?: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply;
@@ -291,7 +292,6 @@ export interface Chat {
   username?: string;
   first_name?: string;
   last_name?: string;
-  is_forum?: boolean
   photo?: ChatPhoto;
   bio?: string
   description?: string;
@@ -300,6 +300,8 @@ export interface Chat {
   permissions?: ChatPermissions;
   can_set_sticker_set?: boolean;
   sticker_set_name?: string;
+  is_forum?: string; 
+  is_direct_messages?: boolean
 }
 
 export interface WriteAccessAllowed {
@@ -389,6 +391,7 @@ export interface VideoChatParticipantsInvited {
 export interface Message {
   message_id: number;
   message_thread_id?: number;
+  direct_messages_topic?: DirectMessagesTopic
   from?: User
   sender_business_bot?: User
   date: number
@@ -736,6 +739,11 @@ export interface Poll {
   question: string;
   options: PollOption[];
   is_closed: boolean;
+}
+
+export interface DirectMessagesTopic {
+  topic_id: string
+  user?: User
 }
 
 export interface UserProfilePhotos {
