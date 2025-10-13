@@ -16,8 +16,8 @@
   ],
   "scripts": {
     "prepublishOnly": "npm run build && npm run test && npm run spec",
-    "build": "tsc",
-    "watch": "tsc --watch",
+    "build": "tsgo",
+    "watch": "tsgo --watch",
     "test": "node --test",
     "spec": "node --test spec.js",
     "sync": "wget -O currencies.json https://core.telegram.org/bots/payments/currencies.json"
@@ -25,7 +25,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^22.15.17",
-    "typescript": "^5.8.3"
+    "@types/node": "^22.15.17"
+  },
+  "dependencies": {
+    "@typescript/native-preview": "^7.0.0-dev.20251013.1"
   }
 }

@@ -2064,6 +2064,10 @@ export function isMessageToEditNotFoundError(err: unknown) {
   return err instanceof Error && err.message === "Bad Request: message to edit not found"
 }
 
+export function isMessageToDeleteNotFoundError(err: unknown) {
+  return err instanceof Error && err.message === "Bad Request: message to delete not found"
+}
+
 // Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a specified new message content and reply markup are exactly the same as a current content and reply markup of the message
 // Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message
 export function isMessageNotModifiedError(err: unknown) {
