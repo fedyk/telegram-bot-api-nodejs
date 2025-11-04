@@ -300,7 +300,7 @@ export interface Chat {
   permissions?: ChatPermissions;
   can_set_sticker_set?: boolean;
   sticker_set_name?: string;
-  is_forum?: string; 
+  is_forum?: string;
   is_direct_messages?: boolean
 }
 
@@ -2092,6 +2092,11 @@ export function isWrongFileIdentifierError(err: unknown) {
 // Bad Request: invalid file HTTP URL specified: Unsupported URL protocol
 export function isInvalidFileUrlSpecifiedError(err: unknown) {
   return err instanceof Error && err.message.includes("invalid file HTTP URL specified: Unsupported URL protocol")
+}
+
+// Bad Request: message can't be deleted
+export function isMessageDeleteError(err: unknown) {
+  return err instanceof Error && err.message.includes("message can't be deleted")
 }
 
 export function parseRetryAfterTime(err: unknown): number {

@@ -25,9 +25,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^22.15.17"
+    "@types/node": "^24.10.0"
   },
   "dependencies": {
-    "@typescript/native-preview": "^7.0.0-dev.20251013.1"
+    "@typescript/native-preview": "^7.0.0-dev.20251104.1"
   }
 }
