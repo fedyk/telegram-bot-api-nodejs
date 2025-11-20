@@ -851,8 +851,12 @@ export interface ChatPermissions {
 
 export interface Sticker {
   file_id: string;
+  file_unique_id: string;
+  type: "regular" | "mask" | "custom_emoji"
   width: number;
   height: number;
+  is_animated: boolean
+  is_video: boolean
   thumbnail?: PhotoSize;
   /** @deprecated */
   thumb?: PhotoSize;
@@ -1698,14 +1702,7 @@ function parsePhotoSize(p: PhotoSize) {
 }
 
 function parseSticker(v: Sticker): Sticker {
-  return {
-    file_id: String(v.file_id),
-    width: Number(v.width),
-    height: Number(v.height),
-    thumb: v.thumb ? parsePhotoSize(v.thumb) : void 0,
-    thumbnail: v.thumbnail ? parsePhotoSize(v.thumbnail) : void 0,
-    emoji: String(v.emoji),
-  }
+  return v
 }
 
 function parseVideo(v: Video): Video {
