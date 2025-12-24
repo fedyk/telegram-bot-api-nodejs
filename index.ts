@@ -2001,63 +2001,67 @@ export const SUPPORTED_REACTION_EMOJI = ["👍", "👎", "\u2764\ufe0f" // red h
   , "😘", "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"
 ]
 
-export function isUnauthorizedError(err: unknown): boolean {
+export function isUnauthorizedError(err: unknown): err is Error {
   return err instanceof Error && err.message === "Unauthorized"
 }
 
-export function isBotBlockedByUserError(err: unknown): boolean {
+export function isBotBlockedByUserError(err: unknown): err is Error {
   return err instanceof Error && err.message.includes("Forbidden: bot was blocked by the user")
 }
 
-export function isChatNotFoundError(err: unknown): boolean {
+export function isChatNotFoundError(err: unknown): err is Error {
   return err instanceof Error && err.message.includes("Bad Request: chat not found")
 }
 
-export function isUserDeactivatedError(err: unknown): boolean {
+export function isUserDeactivatedError(err: unknown): err is Error {
   return err instanceof Error && err.message.includes("Forbidden: user is deactivated")
 }
 
-export function isBotKickedFromSupergroupError(err: unknown): boolean {
-  return err instanceof Error && err.message.includes("Forbidden: bot was kicked from the supergroup chat")
+export function isBotKickedFromSupergroupError(err: unknown): err is Error {
+  return err instanceof Error && err.message === "Forbidden: bot was kicked from the supergroup chat"
 }
 
-export function isNotEnoughRightsError(err: unknown): boolean {
+export function isBotKickedFromGroupError(err: unknown): err is Error {
+  return err instanceof Error && err.message === "Forbidden: bot was kicked from the group chat"
+}
+
+export function isNotEnoughRightsError(err: unknown): err is Error {
   return err instanceof Error && err.message.includes("Bad Request: not enough rights to send text messages to the chat")
 }
 
-export function isUpgradeToSupergroupChatError(err: unknown): boolean {
+export function isUpgradeToSupergroupChatError(err: unknown): err is Error {
   return err instanceof Error && err.message.includes("Bad Request: group chat was upgraded to a supergroup chat")
 }
 
-export function isTextMustBeNonEmptyError(err: unknown): boolean {
+export function isTextMustBeNonEmptyError(err: unknown): err is Error {
   return err instanceof Error && err.message.includes("Bad Request: text must be non-empty")
 }
 
-export function isTooManyRequestsError(err: unknown): boolean {
+export function isTooManyRequestsError(err: unknown): err is Error {
   return err instanceof Error && err.message.includes("Too Many Requests: retry after")
 }
 
-export function isMessageTooLongError(err: unknown): boolean {
+export function isMessageTooLongError(err: unknown): err is Error {
   return err instanceof Error && err.message.includes("message is too long")
 }
 
-export function isMessageCaptionTooLongError(err: unknown): boolean {
+export function isMessageCaptionTooLongError(err: unknown): err is Error {
   return err instanceof Error && err.message.includes("message caption is too long")
 }
 
-export function isWebpageCurlFailedError(err: unknown) {
+export function isWebpageCurlFailedError(err: unknown): err is Error {
   return err instanceof Error && err.message.includes("WEBPAGE_CURL_FAILED")
 }
 
-export function isWrongFileUrlError(err: unknown) {
+export function isWrongFileUrlError(err: unknown): err is Error {
   return err instanceof Error && err.message.includes("Wrong file identifier/HTTP URL specified")
 }
 
-export function isBadGatewayError(err: unknown) {
+export function isBadGatewayError(err: unknown): err is Error {
   return err instanceof Error && err.message === "Bad Gateway"
 }
 
-export function isMessageToEditNotFoundError(err: unknown) {
+export function isMessageToEditNotFoundError(err: unknown): err is Error {
   return err instanceof Error && err.message === "Bad Request: message to edit not found"
 }
 

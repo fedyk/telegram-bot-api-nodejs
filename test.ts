@@ -1,6 +1,6 @@
 import test, { describe, it } from "node:test"
 import { ok, deepEqual, equal } from "node:assert/strict"
-import { TelegramError, currencies, isFailToGetHTTPURLContentError, isMessageNotModifiedError, isMessageToEditNotFoundError, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime, removeTokenFromUrl } from "./index.js"
+import { TelegramError, currencies, isBotKickedFromGroupError, isFailToGetHTTPURLContentError, isMessageNotModifiedError, isMessageToEditNotFoundError, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime, removeTokenFromUrl } from "./index.js"
 import { assert } from "node:console"
 
 describe("TelegramError", function () {
@@ -134,4 +134,9 @@ describe(removeTokenFromUrl.name, function () {
 test(isFailToGetHTTPURLContentError.name, function() {
   equal(isFailToGetHTTPURLContentError(new Error("Bad Request: failed to get HTTP URL content")), true)
   equal(isFailToGetHTTPURLContentError(new Error("Bad Request: failed to get TEXT content")), false)
+})
+
+test(isBotKickedFromGroupError.name, function() {
+  equal(isBotKickedFromGroupError(new Error("Forbidden: bot was kicked from the group chat")), true)
+  equal(isBotKickedFromGroupError(new Error("Bad Request: message to edit not found")), false)
 })
