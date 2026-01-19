@@ -1,6 +1,6 @@
 import test, { describe, it } from "node:test"
 import { ok, deepEqual, equal } from "node:assert/strict"
-import { TelegramError, currencies, isBotKickedFromGroupError, isFailToGetHTTPURLContentError, isMessageNotModifiedError, isMessageToEditNotFoundError, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime, removeTokenFromUrl } from "./index.js"
+import { TelegramError, currencies, isBotKickedFromGroupError, isBotNotMemberGroupChatError, isBusinessPeerUsageMissingError, isFailToGetHTTPURLContentError, isMessageNotModifiedError, isMessageToEditNotFoundError, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime, removeTokenFromUrl } from "./index.js"
 import { assert } from "node:console"
 
 describe("TelegramError", function () {
@@ -131,12 +131,22 @@ describe(removeTokenFromUrl.name, function () {
   })
 })
 
-test(isFailToGetHTTPURLContentError.name, function() {
+test(isFailToGetHTTPURLContentError.name, function () {
   equal(isFailToGetHTTPURLContentError(new Error("Bad Request: failed to get HTTP URL content")), true)
   equal(isFailToGetHTTPURLContentError(new Error("Bad Request: failed to get TEXT content")), false)
 })
 
-test(isBotKickedFromGroupError.name, function() {
+test(isBotKickedFromGroupError.name, function () {
   equal(isBotKickedFromGroupError(new Error("Forbidden: bot was kicked from the group chat")), true)
   equal(isBotKickedFromGroupError(new Error("Bad Request: message to edit not found")), false)
+})
+
+test(isBotNotMemberGroupChatError.name, function () {
+  equal(isBotNotMemberGroupChatError(new Error("Forbidden: bot is not a member of the group chat")), true)
+  equal(isBotNotMemberGroupChatError(new Error("Forbidden: test message")), false)
+})
+
+test(isBusinessPeerUsageMissingError.name, function () {
+  equal(isBusinessPeerUsageMissingError(new Error("Bad Request: BUSINESS_PEER_USAGE_MISSING")), true)
+  equal(isBusinessPeerUsageMissingError(new Error("test error")), false)
 })

@@ -2100,6 +2100,14 @@ export function isMessageDeleteError(err: unknown) {
   return err instanceof Error && err.message.includes("message can't be deleted")
 }
 
+export function isBotNotMemberGroupChatError(err: unknown) {
+  return err instanceof Error && err.message === "Forbidden: bot is not a member of the group chat"
+}
+
+export function isBusinessPeerUsageMissingError(err: unknown) {
+  return err instanceof Error && err.message === "Bad Request: BUSINESS_PEER_USAGE_MISSING"
+}
+
 export function parseRetryAfterTime(err: unknown): number {
   if (!(err instanceof Error)) {
     throw new RangeError("`err` needs to be an Error")
