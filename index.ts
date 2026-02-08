@@ -95,6 +95,18 @@ export interface SendMessageOptions extends SendBasicOptions {
   entities?: MessageEntity[]
 }
 
+export interface SendPhotoOptions extends SendBasicOptions {
+  photo: string
+  caption?: string
+  parse_mode?: ParseMode
+}
+
+export interface SendAudioOptions extends SendBasicOptions {
+  audio: string
+  caption?: string
+  parse_mode?: ParseMode
+}
+
 export interface SendAnimationOptions extends SendBasicOptions {
   animation: string
   parse_mode?: ParseMode;
@@ -105,6 +117,18 @@ export interface SendDocumentOptions extends SendBasicOptions {
   document: string
   parse_mode?: ParseMode;
   caption?: string;
+}
+
+export interface SendVideoOptions extends SendBasicOptions {
+  video: string
+  caption?: string
+  parse_mode?: ParseMode
+}
+
+export interface SendVoiceOptions extends SendBasicOptions {
+  voice: string
+  caption?: string
+  parse_mode?: ParseMode
 }
 
 export interface SendMediaGroupOptions extends SendBasicOptions {
@@ -1398,107 +1422,65 @@ export function deleteMessage(token: string, payload: {
   }).then(parseResponse<{}>)
 }
 
-export function sendPhoto(token: string, payload: SendBasicOptions & {
-  photo: string
-  caption?: string
-  parse_mode?: ParseMode
-}, signal: AbortSignal) {
+export function sendPhoto(token: string, payload: SendPhotoOptions | FormData, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
     method: "POST",
-    body: JSON.stringify(payload),
-    headers,
+    body: prepareFormBody(payload),
+    headers: prepareFormHeaders(payload),
     signal
   }).then(parseResponse<Message>)
 }
 
-export function sendAudio(token: string, payload: SendBasicOptions & {
-  audio: string
-  caption?: string
-  parse_mode?: ParseMode
-}, signal: AbortSignal) {
+export function sendAudio(token: string, payload: SendAudioOptions | FormData, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/sendAudio`, {
     method: "POST",
-    body: JSON.stringify(payload),
-    headers,
+    body: prepareFormBody(payload),
+    headers: prepareFormHeaders(payload),
     signal
   }).then(parseResponse<Message>)
 }
 
-export function sendAnimation(token: string, payload: SendAnimationOptions, signal: AbortSignal) {
+export function sendAnimation(token: string, payload: SendAnimationOptions | FormData, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/sendAnimation`, {
     method: "POST",
-    body: JSON.stringify(payload),
-    headers,
+    body: prepareFormBody(payload),
+    headers: prepareFormHeaders(payload),
     signal
   }).then(parseResponse<Message>)
 }
 
-/**
-   * @example 
-   * 
-   * const body = new FormData()
-   *
-   * body.append("chat_id", payload.chat_id)
-   * body.append("caption", payload.caption)
-   * body.append("document", payload.document, payload.documentName)
-   *
-   * if (payload.parse_mode) {
-   *   body.append("parse_mode", payload.parse_mode)
-   * }
-   * 
-   * sendDocument("token", payload)
-   */
 export function sendDocument(token: string, payload: SendDocumentOptions | FormData, signal: AbortSignal) {
-  let h: HeadersInit | undefined = headers
-  let b: BodyInit | undefined = undefined
-
-  if (payload instanceof FormData) {
-    h = undefined
-    b = payload
-  }
-  else {
-    b = JSON.stringify(payload)
-  }
-
   return fetch(`https://api.telegram.org/bot${token}/sendDocument`, {
     method: "POST",
-    body: b,
-    headers: h,
+    body: prepareFormBody(payload),
+    headers: prepareFormHeaders(payload),
     signal
   }).then(parseResponse<Message>)
 }
 
-export function sendVideo(token: string, payload: SendBasicOptions & {
-  video: string
-  caption?: string
-  parse_mode?: ParseMode
-}, signal: AbortSignal) {
+export function sendVideo(token: string, payload: SendVideoOptions | FormData, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/sendVideo`, {
     method: "POST",
-    body: JSON.stringify(payload),
-    headers,
+    body: prepareFormBody(payload),
+    headers: prepareFormHeaders(payload),
     signal
   }).then(parseResponse<Message>)
 }
 
-export function sendVoice(token: string, payload: SendBasicOptions & {
-  voice: string
-  caption?: string
-  parse_mode?: ParseMode
-}, signal: AbortSignal) {
+export function sendVoice(token: string, payload: SendVoiceOptions | FormData, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/sendVoice`, {
     method: "POST",
-    body: JSON.stringify(payload),
-    headers,
+    body: prepareFormBody(payload),
+    headers: prepareFormHeaders(payload),
     signal
   }).then(parseResponse<Message>)
 }
 
-export function sendMediaGroup(token: string, payload: SendMediaGroupOptions, signal: AbortSignal) {
+export function sendMediaGroup(token: string, payload: SendMediaGroupOptions | FormData, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/sendMediaGroup`, {
     method: "POST",
-    body: JSON.stringify(payload),
-    headers,
+    body: prepareFormBody(payload),
+    headers: prepareFormHeaders(payload),
     signal
   }).then(parseResponse<Message[]>)
 }
@@ -1927,6 +1909,25 @@ function parseReactionCount(reaction: ReactionCount): ReactionCount {
   }
 }
 
+export function prepareFormBody(payload: FormData | Object): BodyInit | string {
+  if (payload instanceof FormData) {
+    return payload
+  }
+
+  return JSON.stringify(payload)
+}
+
+export function prepareFormHeaders(forPayload: FormData | Object): HeadersInit | undefined {
+  if (forPayload instanceof FormData) {
+    return undefined
+  }
+
+  return {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+  }
+}
+
 export function parseResponse<T>(response: Response) {
   return response.text().then(function (text) {
     let data: any
@@ -2080,6 +2081,12 @@ export function isWrongTypeOfTheWebPageContentError(err: unknown) {
   return err instanceof Error && err.message.includes("wrong type of the web page content")
 }
 
+// Bad Request: failed to send message #1 with the error message "WEBPAGE_MEDIA_EMPTY"
+export function isWebpageMediaEmptyError(err: unknown) {
+  return err instanceof Error
+    && /^Bad Request: failed to send message #\d+ with the error message "WEBPAGE_MEDIA_EMPTY"$/.test(err.message)
+}
+
 // Bad Request: failed to get HTTP URL content
 export function isFailToGetHTTPURLContentError(err: unknown) {
   return err instanceof Error && err.message.includes("failed to get HTTP URL content")
@@ -2106,6 +2113,10 @@ export function isBotNotMemberGroupChatError(err: unknown) {
 
 export function isBusinessPeerUsageMissingError(err: unknown) {
   return err instanceof Error && err.message === "Bad Request: BUSINESS_PEER_USAGE_MISSING"
+}
+
+export function isInvalidPhotoDimensionsError(err: unknown) {
+  return err instanceof Error && err.message === "Bad Request: PHOTO_INVALID_DIMENSIONS"
 }
 
 export function parseRetryAfterTime(err: unknown): number {

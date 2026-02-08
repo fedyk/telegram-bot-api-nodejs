@@ -1,7 +1,6 @@
 import test, { describe, it } from "node:test"
 import { ok, deepEqual, equal } from "node:assert/strict"
-import { TelegramError, currencies, isBotKickedFromGroupError, isBotNotMemberGroupChatError, isBusinessPeerUsageMissingError, isFailToGetHTTPURLContentError, isMessageNotModifiedError, isMessageToEditNotFoundError, isTextMustBeNonEmptyError, isTooManyRequestsError, parseResponse, parseRetryAfterTime, removeTokenFromUrl } from "./index.js"
-import { assert } from "node:console"
+import { TelegramError, currencies, isBotKickedFromGroupError, isBotNotMemberGroupChatError, isBusinessPeerUsageMissingError, isFailToGetHTTPURLContentError, isInvalidPhotoDimensionsError, isMessageNotModifiedError, isMessageToEditNotFoundError, isTextMustBeNonEmptyError, isTooManyRequestsError, isWebpageMediaEmptyError, parseResponse, parseRetryAfterTime, prepareFormBody, prepareFormHeaders, removeTokenFromUrl } from "./index.js"
 
 describe("TelegramError", function () {
   it("should except additional details", function () {
@@ -149,4 +148,29 @@ test(isBotNotMemberGroupChatError.name, function () {
 test(isBusinessPeerUsageMissingError.name, function () {
   equal(isBusinessPeerUsageMissingError(new Error("Bad Request: BUSINESS_PEER_USAGE_MISSING")), true)
   equal(isBusinessPeerUsageMissingError(new Error("test error")), false)
+})
+
+test(isWebpageMediaEmptyError.name, function () {
+  equal(isWebpageMediaEmptyError(new Error("Bad Request: failed to send message #1 with the error message \"WEBPAGE_MEDIA_EMPTY\"")), true)
+  equal(isWebpageMediaEmptyError(new Error("Bad Request: failed to send message #42 with the error message \"WEBPAGE_MEDIA_EMPTY\"")), true)
+  equal(isWebpageMediaEmptyError(new Error("Bad Request: failed to send message #1 with the error message \"WEBPAGE_CURL_FAILED\"")), false)
+})
+
+test(prepareFormBody.name, function () {
+  const form = new FormData()
+  equal(prepareFormBody(form), form)
+  equal(prepareFormBody({}), "{}")
+})
+
+test(prepareFormHeaders.name, function () {
+  equal(prepareFormHeaders(new FormData()), undefined)
+  deepEqual(prepareFormHeaders({}), {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+  })
+})
+
+test(isInvalidPhotoDimensionsError.name, function() {
+  equal(isInvalidPhotoDimensionsError(new Error("Bad Request: PHOTO_INVALID_DIMENSIONS")), true)
+  equal(isInvalidPhotoDimensionsError(new Error("Bad Request: test error")), false)
 })
