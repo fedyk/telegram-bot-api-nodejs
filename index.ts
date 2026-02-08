@@ -2116,7 +2116,7 @@ export function isBusinessPeerUsageMissingError(err: unknown) {
 }
 
 export function isInvalidPhotoDimensionsError(err: unknown) {
-  return err instanceof Error && err.message === "Bad Request: PHOTO_INVALID_DIMENSIONS"
+  return err instanceof Error && err.message.includes("PHOTO_INVALID_DIMENSIONS")
 }
 
 export function parseRetryAfterTime(err: unknown): number {
