@@ -722,7 +722,7 @@ export interface InputMediaVideo extends InputMediaBase {
   supports_streaming?: boolean;
 }
 
-export type InputMedia = InputMediaPhoto | InputMediaVideo | InputMediaDocument | InputMediaPhoto;
+export type InputMedia = InputMediaPhoto | InputMediaVideo | InputMediaDocument | InputMediaAudio;
 
 export interface VideoNote extends FileBase {
   length: number;
