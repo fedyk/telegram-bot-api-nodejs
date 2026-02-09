@@ -127,6 +127,7 @@ export interface SendVideoOptions extends SendBasicOptions {
   video: string
   caption?: string
   parse_mode?: ParseMode
+  show_caption_above_media?: boolean
 }
 
 export interface SendVoiceOptions extends SendBasicOptions {
