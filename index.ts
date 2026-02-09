@@ -99,24 +99,28 @@ export interface SendPhotoOptions extends SendBasicOptions {
   photo: string
   caption?: string
   parse_mode?: ParseMode
+  show_caption_above_media?: boolean
 }
 
 export interface SendAudioOptions extends SendBasicOptions {
   audio: string
   caption?: string
   parse_mode?: ParseMode
+  show_caption_above_media?: boolean
 }
 
 export interface SendAnimationOptions extends SendBasicOptions {
   animation: string
-  parse_mode?: ParseMode;
   caption?: string;
+  parse_mode?: ParseMode
+  show_caption_above_media?: boolean
 }
 
 export interface SendDocumentOptions extends SendBasicOptions {
   document: string
-  parse_mode?: ParseMode;
   caption?: string;
+  parse_mode?: ParseMode
+  show_caption_above_media?: boolean
 }
 
 export interface SendVideoOptions extends SendBasicOptions {
@@ -2094,7 +2098,7 @@ export function isFailToGetHTTPURLContentError(err: unknown) {
 
 // Bad Request: wrong file identifier/HTTP URL specified
 export function isWrongFileIdentifierError(err: unknown) {
-  return err instanceof Error && err.message.includes("wrong file identifier/HTTP URL specified")
+  return err instanceof Error && err.message.toLowerCase().includes("wrong file identifier/http url specified")
 }
 
 // Bad Request: invalid file HTTP URL specified: Unsupported URL protocol

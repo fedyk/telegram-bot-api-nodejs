@@ -1,6 +1,25 @@
 import test, { describe, it } from "node:test"
 import { ok, deepEqual, equal } from "node:assert/strict"
-import { TelegramError, currencies, isBotKickedFromGroupError, isBotNotMemberGroupChatError, isBusinessPeerUsageMissingError, isFailToGetHTTPURLContentError, isInvalidPhotoDimensionsError, isMessageNotModifiedError, isMessageToEditNotFoundError, isTextMustBeNonEmptyError, isTooManyRequestsError, isWebpageMediaEmptyError, parseResponse, parseRetryAfterTime, prepareFormBody, prepareFormHeaders, removeTokenFromUrl } from "./index.js"
+import {
+  TelegramError,
+  currencies,
+  isBotKickedFromGroupError,
+  isBotNotMemberGroupChatError,
+  isBusinessPeerUsageMissingError,
+  isFailToGetHTTPURLContentError,
+  isInvalidPhotoDimensionsError,
+  isMessageNotModifiedError,
+  isMessageToEditNotFoundError,
+  isTextMustBeNonEmptyError,
+  isTooManyRequestsError,
+  isWebpageMediaEmptyError,
+  isWrongFileIdentifierError,
+  parseResponse,
+  parseRetryAfterTime,
+  prepareFormBody,
+  prepareFormHeaders,
+  removeTokenFromUrl
+} from "./index.js"
 
 describe("TelegramError", function () {
   it("should except additional details", function () {
@@ -170,8 +189,14 @@ test(prepareFormHeaders.name, function () {
   })
 })
 
-test(isInvalidPhotoDimensionsError.name, function() {
+test(isInvalidPhotoDimensionsError.name, function () {
   equal(isInvalidPhotoDimensionsError(new Error("Bad Request: PHOTO_INVALID_DIMENSIONS")), true)
   equal(isInvalidPhotoDimensionsError(new Error(`Bad Request: failed to send message #1 with the error message "PHOTO_INVALID_DIMENSIONS"`)), true)
   equal(isInvalidPhotoDimensionsError(new Error("Bad Request: test error")), false)
+})
+
+test(isWrongFileIdentifierError.name, function () {
+  equal(isWrongFileIdentifierError(new Error(`Bad Request: wrong file identifier/HTTP URL specified`)), true)
+  equal(isWrongFileIdentifierError(new Error(`Bad Request: failed to send message #1 with the error message "Wrong file identifier/HTTP URL specified"`)), true)
+  equal(isWrongFileIdentifierError(new Error("Bad Request: test error")), false)
 })
