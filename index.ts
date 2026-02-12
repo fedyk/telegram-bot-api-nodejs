@@ -456,6 +456,8 @@ export interface Message {
   poll?: Poll;
   new_chat_members?: User[];
   left_chat_member?: User;
+  chat_owner_left?: ChatOwnerLeft;
+  chat_owner_changed?: ChatOwnerChanged;
   new_chat_title?: string;
   new_chat_photo?: PhotoSize[];
   delete_chat_photo?: boolean;
@@ -528,6 +530,13 @@ export interface ChatBoostRemoved {
   source: ChatBoostSource
 }
 
+export interface ChatOwnerLeft {
+  new_owner?: User
+}
+
+export interface ChatOwnerChanged {
+  new_owner: User
+}
 
 export interface BusinessConnection {
   id: string
