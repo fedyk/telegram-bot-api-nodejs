@@ -28,6 +28,7 @@
     "@types/node": "^25.2.2"
   },
   "dependencies": {
-    "@typescript/native-preview": "^7.0.0-dev.20260208.1"
+    "@typescript/native-preview": "^7.0.0-dev.20260208.1",
+    "undici": "^7.22.0"
   }
 }

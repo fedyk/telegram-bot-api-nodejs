@@ -1,4 +1,6 @@
+import { request } from "undici";
 import { readFileSync } from "fs";
+import type { Dispatcher } from "undici";
 
 export type ChatType = "private"
   | "group"
@@ -1387,14 +1389,14 @@ export function deleteWebhook(token: string, params: {
   }).then(parseResponse<Boolean>)
 }
 
-/** @todo cehck if response is the same as in typings */
+/** @todo check if response is the same as in typings */
 export function getWebhookInfo(token: string, signal: AbortSignal) {
-  return fetch(`https://api.telegram.org/bot${token}/getWebhookInfo`, {
+  return request(`https://api.telegram.org/bot${token}/getWebhookInfo`, {
     method: "POST",
     body: JSON.stringify({}),
     headers,
     signal
-  }).then(parseResponse<WebhookInfo>)
+  }).then(parseUndiciResponse<WebhookInfo>)
 }
 
 export function getMe(token: string, signal: AbortSignal) {
@@ -1964,6 +1966,31 @@ export function parseResponse<T>(response: Response) {
     const parameters = Object.assign(data.parameters || {}, {
       text,
       url: removeTokenFromUrl(response.url)
+    })
+
+    throw new TelegramError(description, error_code, parameters)
+  })
+}
+
+export function parseUndiciResponse<T = any>(response: Pick<Dispatcher.ResponseData, "body" | "statusCode">) {
+  return response.body.text().then(function (text) {
+    let data
+
+    try {
+      data = JSON.parse(text)
+    }
+    catch (err) {
+      throw new TelegramError(`Invalid response: ${text}`, response.statusCode)
+    }
+
+    if (200 <= response.statusCode && response.statusCode < 300) {
+      return data.result as T
+    }
+
+    const error_code = Number(data.error_code ?? 0)
+    const description = String(data.description ?? "")
+    const parameters = Object.assign(data.parameters || {}, {
+      text,
     })
 
     throw new TelegramError(description, error_code, parameters)

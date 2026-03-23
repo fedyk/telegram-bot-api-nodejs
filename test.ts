@@ -192,6 +192,7 @@ test(prepareFormHeaders.name, function () {
 test(isInvalidPhotoDimensionsError.name, function () {
   equal(isInvalidPhotoDimensionsError(new Error("Bad Request: PHOTO_INVALID_DIMENSIONS")), true)
   equal(isInvalidPhotoDimensionsError(new Error(`Bad Request: failed to send message #1 with the error message "PHOTO_INVALID_DIMENSIONS"`)), true)
+  equal(isInvalidPhotoDimensionsError(new Error(`Bad Request: failed to send message #2 with the error message "PHOTO_INVALID_DIMENSIONS"`)), true)
   equal(isInvalidPhotoDimensionsError(new Error("Bad Request: test error")), false)
 })
 
