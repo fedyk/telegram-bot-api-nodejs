@@ -14,6 +14,7 @@ import {
   isTooManyRequestsError,
   isWebpageMediaEmptyError,
   isWrongFileIdentifierError,
+  isGroupChatWasDeletedError,
   parseResponse,
   parseRetryAfterTime,
   prepareFormBody,
@@ -199,4 +200,9 @@ test(isWrongFileIdentifierError.name, function () {
   equal(isWrongFileIdentifierError(new Error(`Bad Request: wrong file identifier/HTTP URL specified`)), true)
   equal(isWrongFileIdentifierError(new Error(`Bad Request: failed to send message #1 with the error message "Wrong file identifier/HTTP URL specified"`)), true)
   equal(isWrongFileIdentifierError(new Error("Bad Request: test error")), false)
+})
+
+test(isGroupChatWasDeletedError.name, function () {
+  equal(isGroupChatWasDeletedError(new Error(`Forbidden: the group chat was deleted`)), true)
+  equal(isGroupChatWasDeletedError(new Error("Bad Request: test error")), false)
 })

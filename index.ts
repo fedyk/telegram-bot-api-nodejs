@@ -2125,6 +2125,11 @@ export function isBotNotMemberGroupChatError(err: unknown) {
   return err instanceof Error && err.message === "Forbidden: bot is not a member of the group chat"
 }
 
+// Forbidden: the group chat was deleted
+export function isGroupChatWasDeletedError(err: unknown) {
+  return err instanceof Error && err.message === "Forbidden: the group chat was deleted"
+}
+
 export function isBusinessPeerUsageMissingError(err: unknown) {
   return err instanceof Error && err.message === "Bad Request: BUSINESS_PEER_USAGE_MISSING"
 }
