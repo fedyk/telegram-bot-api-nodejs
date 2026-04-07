@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "NodeNext",
+    "target": "es2025",
+    "module": "esnext",
     "declaration": true,
-    "strict": true
+    "strict": true,
+    "types": ["node"]
   }
 }

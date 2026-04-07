@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 
 export type ChatType = "private"
   | "group"
@@ -440,6 +440,7 @@ export interface Message {
   caption_entities?: MessageEntity[];
   audio?: Audio;
   document?: Document;
+  paid_media?: PaidMediaInfo
   animation?: Animation;
   game?: Game;
   photo?: PhotoSize[];
@@ -689,6 +690,18 @@ export interface Video extends FileBase {
 export interface Voice extends FileBase {
   duration: number;
   mime_type?: string;
+}
+
+export interface PaidMediaInfo {
+  star_count: number
+  paid_media: PaidMedia[]
+}
+
+export interface PaidMedia {
+  type: "preview"
+  width: number
+  height: number
+  duration: number
 }
 
 export interface InputMediaBase {
