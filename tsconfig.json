@@ -4,6 +4,7 @@
     "module": "esnext",
     "declaration": true,
     "strict": true,
-    "types": ["node"]
+    "types": ["node"],
+    "rootDir": "./",
   }
 }

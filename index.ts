@@ -697,11 +697,23 @@ export interface PaidMediaInfo {
   paid_media: PaidMedia[]
 }
 
-export interface PaidMedia {
+export type PaidMedia = PaidMediaPreview | PaidMediaPhoto | PaidMediaVideo
+
+export interface PaidMediaPreview {
   type: "preview"
   width: number
   height: number
   duration: number
+}
+
+export interface PaidMediaPhoto {
+  type: "photo"
+  photo: PhotoSize
+}
+
+export interface PaidMediaVideo {
+  type: "video"
+  video: Video
 }
 
 export interface InputMediaBase {
