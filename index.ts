@@ -193,17 +193,26 @@ export interface GetMyCommandsOptions {
 
 export interface DeleteMyCommandsOptions { }
 
-export interface EditMessageTextOptions extends EditMessageReplyMarkupOptions {
+export interface EditMessageTextOptions extends EditMessageOptions {
   parse_mode?: ParseMode;
   disable_web_page_preview?: boolean;
   text: string
 }
 
-export interface EditMessageCaptionOptions extends EditMessageReplyMarkupOptions {
+export interface EditMessageCaptionOptions extends EditMessageOptions {
+  caption?: string
+  parse_mode?: ParseMode
+  caption_entities?: MessageEntity[]
+  show_caption_above_media?: boolean
+  reply_markup?: InlineKeyboardMarkup
+}
+
+export interface EditMessageReplyMarkupOptions extends EditMessageOptions {
   reply_markup?: InlineKeyboardMarkup;
 }
 
-export interface EditMessageReplyMarkupOptions {
+export interface EditMessageOptions {
+  business_connection_id?: number | string;
   chat_id?: number | string;
   message_id?: number | string;
   inline_message_id?: string;
@@ -623,7 +632,10 @@ export interface FileBase {
   file_size?: number;
 }
 
-export type MessageOrigin = MessageOriginUser | MessageOriginHiddenUser | MessageOriginChat | MessageOriginChannel
+export type MessageOrigin = MessageOriginUser
+  | MessageOriginHiddenUser
+  | MessageOriginChat
+  | MessageOriginChannel
 
 export interface MessageOriginUser {
   type: "user";
@@ -641,7 +653,7 @@ export interface MessageOriginChat {
   type: "chat";
   date: number;
   sender_chat: Chat;
-  author_signature?: string; // Optional
+  author_signature?: string
 }
 
 export interface MessageOriginChannel {
@@ -649,6 +661,7 @@ export interface MessageOriginChannel {
   date: number;
   chat: Chat;
   message_id: number;
+  author_signature?: string
 }
 
 export interface PhotoSize extends FileBase {
@@ -1442,6 +1455,24 @@ export function sendMessage(token: string, payload: SendMessageOptions, signal: 
 
 export function editMessageText(token: string, payload: EditMessageTextOptions, signal: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/editMessageText`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
+    signal
+  }).then(parseResponse<Message>)
+}
+
+export function editMessageCaption(token: string, payload: EditMessageCaptionOptions, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/editMessageCaption`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
+    signal
+  }).then(parseResponse<Message>)
+}
+
+export function editMessageReplyMarkup(token: string, payload: EditMessageReplyMarkupOptions, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/editMessageReplyMarkup`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers,
