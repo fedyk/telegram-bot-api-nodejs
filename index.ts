@@ -857,6 +857,7 @@ export interface InlineKeyboardMarkup {
 export interface InlineKeyboardButton {
   text: string
   url?: string
+  style?: "danger" | "success" | "primary"
   login_url?: LoginUrl
   callback_data?: string
   switch_inline_query?: string
