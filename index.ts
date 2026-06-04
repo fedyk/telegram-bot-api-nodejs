@@ -840,6 +840,7 @@ export interface ReplyKeyboardMarkup {
 
 export interface KeyboardButton {
   text: string;
+  style?: "danger" | "success" | "primary"
   request_contact?: boolean;
   request_location?: boolean;
 }
@@ -854,14 +855,15 @@ export interface InlineKeyboardMarkup {
 }
 
 export interface InlineKeyboardButton {
-  text: string;
-  url?: string;
-  login_url?: LoginUrl;
-  callback_data?: string;
-  switch_inline_query?: string;
-  switch_inline_query_current_chat?: string;
-  callback_game?: CallbackGame;
-  pay?: boolean;
+  text: string
+  url?: string
+  login_url?: LoginUrl
+  callback_data?: string
+  switch_inline_query?: string
+  switch_inline_query_current_chat?: string
+  copy_text?: CopyTextButton
+  callback_game?: CallbackGame
+  pay?: boolean
 }
 
 export interface LoginUrl {
@@ -869,6 +871,11 @@ export interface LoginUrl {
   forward_text?: string;
   bot_username?: string;
   request_write_acces?: boolean;
+}
+
+export interface CopyTextButton {
+  /** The text to be copied to the clipboard; 1-256 characters */
+  text: string
 }
 
 export interface CallbackQuery {
