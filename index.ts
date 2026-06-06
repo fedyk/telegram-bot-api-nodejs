@@ -833,9 +833,11 @@ export interface File extends FileBase {
 
 export interface ReplyKeyboardMarkup {
   keyboard: KeyboardButton[][];
-  resize_keyboard?: boolean;
-  one_time_keyboard?: boolean;
-  selective?: boolean;
+  is_persistent?: boolean
+  resize_keyboard?: boolean
+  one_time_keyboard?: boolean
+  input_field_placeholder?: boolean
+  selective?: boolean
 }
 
 export interface KeyboardButton {
@@ -891,6 +893,7 @@ export interface CallbackQuery {
 
 export interface ForceReply {
   force_reply: boolean;
+  input_field_placeholder?: string
   selective?: boolean;
 }
 
