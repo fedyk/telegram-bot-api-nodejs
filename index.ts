@@ -836,7 +836,7 @@ export interface ReplyKeyboardMarkup {
   is_persistent?: boolean
   resize_keyboard?: boolean
   one_time_keyboard?: boolean
-  input_field_placeholder?: boolean
+  input_field_placeholder?: string
   selective?: boolean
 }
 
