@@ -46,6 +46,7 @@ export type MessageType =
   | "passport_data"
   | "photo"
   | "pinned_message"
+  | "rich_message"
   | "sticker"
   | "successful_payment"
   | "supergroup_chat_created"
@@ -196,7 +197,9 @@ export interface DeleteMyCommandsOptions { }
 export interface EditMessageTextOptions extends EditMessageOptions {
   parse_mode?: ParseMode;
   disable_web_page_preview?: boolean;
-  text: string
+  entities?: MessageEntity[]
+  text?: string
+  rich_message?: InputRichMessage
 }
 
 export interface EditMessageCaptionOptions extends EditMessageOptions {
@@ -241,7 +244,32 @@ export interface AnswerPreCheckoutQueryOptions {
   error_message?: string;
 }
 
-/// TELEGRAM TYPES ///
+export interface SendRichMessageOptions extends SendBasicOptions {
+  rich_message: InputRichMessage
+  protect_content?: boolean
+  allow_paid_broadcast?: boolean
+  message_effect_id?: string
+  suggested_post_parameters?: object
+  reply_parameters?: ReplyParameters
+}
+
+export interface SendRichMessageDraftOptions {
+  chat_id: number
+  message_thread_id?: number
+  draft_id: number
+  rich_message: InputRichMessage
+}
+
+export interface AnswerChatJoinRequestQueryOptions {
+  chat_join_request_query_id: string
+  result: "approve" | "decline" | "queue"
+}
+
+export interface SendChatJoinRequestWebAppOptions {
+  chat_join_request_query_id: string
+  web_app_url: string
+}
+
 export interface PassportFile {
   file_id: string;
   file_size: number;
@@ -320,6 +348,7 @@ export interface User {
   can_join_groups?: boolean
   can_read_all_group_messages?: boolean
   supports_inline_queries?: boolean
+  supports_join_request_queries?: boolean
   can_connect_to_business?: boolean
 }
 
@@ -340,6 +369,17 @@ export interface Chat {
   sticker_set_name?: string;
   is_forum?: string;
   is_direct_messages?: boolean
+  guard_bot?: User
+}
+
+export interface ReplyParameters {
+  message_id: number;
+  chat_id?: number | string
+  allow_sending_without_reply?: boolean
+  quote?: string
+  quote_parse_mode?: ParseMode
+  quote_entities?: MessageEntity[]
+  quote_position?: number
 }
 
 export interface WriteAccessAllowed {
@@ -431,75 +471,338 @@ export interface Message {
   message_thread_id?: number;
   direct_messages_topic?: DirectMessagesTopic
   from?: User
+  sender_chat?: Chat
+  sender_boost_count?: number
   sender_business_bot?: User
+  sender_tag?: string
+  receiver_user?: User
+  ephemeral_message_id?: number
   date: number
+  guest_query_id?: string
   business_connection_id?: string
   chat: Chat
-  via_bot?: User
   forward_origin?: MessageOrigin
   is_topic_message?: boolean
   is_automatic_forward?: boolean
   reply_to_message?: Message;
+  external_reply?: ExternalReplyInfo
+  quote?: TextQuote
+  reply_to_story?: Story
+  reply_to_checklist_task_id?: number
+  reply_to_poll_option_id?: string
+  via_bot?: User
+  guest_bot_caller_user?: User
+  guest_bot_caller_chat?: Chat
   edit_date?: number;
+  has_protected_content?: true
   is_from_offline?: boolean
+  is_paid_post?: true
   media_group_id?: string;
   author_signature?: string;
+  paid_star_count?: number
   text?: string;
   entities?: MessageEntity[];
-  caption_entities?: MessageEntity[];
+  link_preview_options?: LinkPreviewOptions
+  suggested_post_info?: SuggestedPostInfo
+  effect_id?: string
+  rich_message?: RichMessage
+  animation?: Animation;
   audio?: Audio;
   document?: Document;
+  live_photo?: LivePhoto
   paid_media?: PaidMediaInfo
-  animation?: Animation;
-  game?: Game;
   photo?: PhotoSize[];
   sticker?: Sticker;
   story?: Story;
   video?: Video;
-  voice?: Voice;
   video_note?: VideoNote;
+  voice?: Voice;
   caption?: string;
+  caption_entities?: MessageEntity[];
+  show_caption_above_media?: true
+  has_media_spoiler?: true
+  checklist?: Checklist
   contact?: Contact;
   dice?: Dice;
-  location?: Location;
-  venue?: Venue;
+  game?: Game;
   poll?: Poll;
+  venue?: Venue;
+  location?: Location;
   new_chat_members?: User[];
   left_chat_member?: User;
   chat_owner_left?: ChatOwnerLeft;
   chat_owner_changed?: ChatOwnerChanged;
   new_chat_title?: string;
   new_chat_photo?: PhotoSize[];
-  delete_chat_photo?: boolean;
-  group_chat_created?: boolean;
-  supergroup_chat_created?: boolean;
-  channel_chat_created?: boolean;
+  delete_chat_photo?: true;
+  group_chat_created?: true;
+  supergroup_chat_created?: true;
+  channel_chat_created?: true;
   message_auto_delete_timer_changed?: MessageAutoDeleteTimerChanged
   migrate_to_chat_id?: number;
   migrate_from_chat_id?: number;
-  pinned_message?: Message;
+  pinned_message?: MaybeInaccessibleMessage;
   invoice?: Invoice;
   successful_payment?: SuccessfulPayment;
+  refunded_payment?: RefundedPayment
+  users_shared?: UsersShared
+  chat_shared?: ChatShared
+  gift?: GiftInfo
+  unique_gift?: UniqueGiftInfo
+  gift_upgrade_sent?: GiftInfo
   connected_website?: string;
-  passport_data?: PassportData;
-  reply_markup?: InlineKeyboardMarkup;
-  sender_chat?: Chat
   write_access_allowed?: WriteAccessAllowed
+  passport_data?: PassportData;
+  proximity_alert_triggered?: ProximityAlertTriggered
   boost_added?: ChatBoostAdded
+  chat_background_set?: ChatBackground
+  checklist_tasks_done?: ChecklistTasksDone
+  checklist_tasks_added?: ChecklistTasksAdded
+  community_chat_added?: CommunityChatAdded
+  community_chat_removed?: CommunityChatRemoved
+  direct_message_price_changed?: DirectMessagePriceChanged
   forum_topic_created?: ForumTopicCreated
   forum_topic_edited?: ForumTopicEdited
   forum_topic_closed?: ForumTopicClosed
   forum_topic_reopened?: ForumTopicReopened
   general_forum_topic_hidden?: GeneralForumTopicHidden
   general_forum_topic_unhidden?: GeneralForumTopicUnhidden
+  giveaway_created?: GiveawayCreated
   giveaway?: Giveaway
   giveaway_winners?: GiveawayWinners
-  giveaway_completed: GiveawayCompleted
-  paid_message_price_changed: PaidMessagePriceChanged
+  giveaway_completed?: GiveawayCompleted
+  managed_bot_created?: ManagedBotCreated
+  paid_message_price_changed?: PaidMessagePriceChanged
+  poll_option_added?: PollOptionAdded
+  poll_option_deleted?: PollOptionDeleted
+  suggested_post_approved?: SuggestedPostApproved
+  suggested_post_approval_failed?: SuggestedPostApprovalFailed
+  suggested_post_declined?: SuggestedPostDeclined
+  suggested_post_paid?: SuggestedPostPaid
+  suggested_post_refunded?: SuggestedPostRefunded
   video_chat_scheduled?: VideoChatScheduled
   video_chat_started?: VideoChatStarted
   video_chat_ended?: VideoChatEnded
   video_chat_participants_invited?: VideoChatParticipantsInvited
+  web_app_data?: WebAppData
+  reply_markup?: InlineKeyboardMarkup;
+}
+
+export interface InaccessibleMessage {
+  chat: Chat
+  message_id: number
+  date: 0
+}
+
+export type MaybeInaccessibleMessage = Message | InaccessibleMessage
+
+export interface TextQuote {
+  text: string
+  entities?: MessageEntity[]
+  position: number
+  is_manual?: true
+}
+
+export interface ExternalReplyInfo {
+  origin: MessageOrigin
+  chat?: Chat
+  message_id?: number
+  link_preview_options?: LinkPreviewOptions
+  animation?: Animation
+  audio?: Audio
+  document?: Document
+  live_photo?: LivePhoto
+  paid_media?: PaidMediaInfo
+  photo?: PhotoSize[]
+  sticker?: Sticker
+  story?: Story
+  video?: Video
+  video_note?: VideoNote
+  voice?: Voice
+  has_media_spoiler?: true
+  checklist?: Checklist
+  contact?: Contact
+  dice?: Dice
+  game?: Game
+  giveaway?: Giveaway
+  giveaway_winners?: GiveawayWinners
+  invoice?: Invoice
+  venue?: Venue;
+  location?: Location
+  poll?: Poll
+}
+
+export interface LinkPreviewOptions {
+  is_disabled?: true
+  url?: string
+  prefer_small_media?: true
+  prefer_large_media?: true
+  show_above_text?: true
+}
+
+export interface SuggestedPostPrice {
+  currency: string
+  amount: number
+}
+
+export interface SuggestedPostInfo {
+  state: "pending" | "approved" | "declined"
+  price?: SuggestedPostPrice
+  send_date?: number
+}
+
+export interface LivePhoto extends FileBase {
+  photo?: PhotoSize[]
+  file_unique_id: string
+  width: number
+  height: number
+  duration: number
+  mime_type?: string
+}
+
+export interface ChecklistTask {
+  id: number
+  text: string
+  text_entities?: MessageEntity[]
+  completed_by_user?: User
+  completion_date?: number
+}
+
+export interface Checklist {
+  title: string
+  title_entities?: MessageEntity[]
+  tasks: ChecklistTask[]
+  others_can_add_tasks?: true
+  others_can_mark_tasks_as_done?: true
+}
+
+export interface RefundedPayment {
+  currency: string
+  total_amount: number
+  invoice_payload: string
+  telegram_payment_charge_id: string
+  provider_payment_charge_id?: string
+}
+
+export interface SharedUser {
+  user_id: number
+  first_name?: string
+  last_name?: string
+  username?: string
+  photo?: PhotoSize[]
+}
+
+export interface UsersShared {
+  request_id: number
+  users: SharedUser[]
+}
+
+export interface ChatShared {
+  request_id: number
+  chat_id: number
+  title?: string
+  username?: string
+  photo?: PhotoSize[]
+}
+
+export interface GiftInfo {
+  [key: string]: unknown
+}
+
+export interface UniqueGiftInfo {
+  [key: string]: unknown
+}
+
+export interface ProximityAlertTriggered {
+  traveler: User
+  watcher: User
+  distance: number
+}
+
+export interface ChatBackground {
+  [key: string]: unknown
+}
+
+export interface ChecklistTasksDone {
+  checklist_message?: Message
+  marked_as_done_task_ids?: number[]
+  marked_as_not_done_task_ids?: number[]
+}
+
+export interface ChecklistTasksAdded {
+  checklist_message?: Message
+  tasks: ChecklistTask[]
+}
+
+export interface CommunityChatAdded {
+  chat: Chat
+}
+
+export interface CommunityChatRemoved {
+  chat: Chat
+}
+
+export interface DirectMessagePriceChanged {
+  are_direct_messages_enabled: boolean
+  direct_message_star_count?: number
+}
+
+export interface GiveawayCreated {
+  prize_star_count?: number
+}
+
+export interface ManagedBotCreated {
+  bot: User
+}
+
+export interface PollOptionAdded {
+  poll_message?: Message
+  option: PollOption
+}
+
+export interface PollOptionDeleted {
+  poll_message?: Message
+  option_persistent_id: string
+  option_text: string
+  option_text_entities?: MessageEntity[]
+}
+
+export interface SuggestedPostApproved {
+  suggested_post_message?: Message
+  price?: SuggestedPostPrice
+  send_date: number
+}
+
+export interface SuggestedPostApprovalFailed {
+  suggested_post_message?: Message
+  price: SuggestedPostPrice
+}
+
+export interface SuggestedPostDeclined {
+  suggested_post_message?: Message
+  comment?: string
+}
+
+export interface StarAmount {
+  amount: number
+  nanostar_amount?: number
+}
+
+export interface SuggestedPostPaid {
+  suggested_post_message?: Message
+  currency: "XTR" | "TON"
+  amount?: number
+  star_amount?: StarAmount
+}
+
+export interface SuggestedPostRefunded {
+  suggested_post_message?: Message
+  reason: "post_deleted" | "payment_refunded"
+}
+
+export interface WebAppData {
+  data: string
+  button_text: string
 }
 
 export type ChatBoostSource = ChatBoostSourcePremium | ChatBoostSourceGiftCode | ChatBoostSourceGiveaway;
@@ -735,6 +1038,18 @@ export interface InputMediaBase {
   parse_mode?: ParseMode;
 }
 
+export interface InputMediaAnimation extends InputMediaBase {
+  type: "animation"
+  media: string
+  thumbnail?: string
+  caption?: string
+  parse_mode?: ParseMode
+  width?: number
+  height?: number
+  duration?: number
+  has_spoiler?: boolean
+}
+
 export interface InputMediaAudio extends InputMediaBase {
   type: "audio"
   media: string
@@ -769,12 +1084,398 @@ export interface InputMediaVideo extends InputMediaBase {
   supports_streaming?: boolean;
 }
 
+export interface InputMediaLink {
+  type: "link"
+  url: string
+}
+
+export interface InputMediaLocation {
+  type: "location"
+  latitude: number
+  longitude: number
+  horizontal_accuracy?: number
+}
+
+export interface InputMediaSticker {
+  type: "sticker"
+  media: string
+}
+
+export interface InputMediaVenue {
+  type: "venue"
+  latitude: number
+  longitude: number
+  title: string
+  address: string
+  horizontal_accuracy?: number
+  foursquare_id?: string
+  foursquare_type?: string
+  google_place_id?: string
+  google_place_type?: string
+}
+
 export type InputMedia = InputMediaPhoto | InputMediaVideo | InputMediaDocument | InputMediaAudio;
 
 export interface VideoNote extends FileBase {
   length: number;
   duration: number;
   thumb?: PhotoSize;
+}
+
+export type RichText = string
+  | RichText[]
+  | RichTextBold
+  | RichTextItalic
+  | RichTextUnderline
+  | RichTextStrikethrough
+  | RichTextSpoiler
+  | RichTextDateTime
+  | RichTextTextMention
+  | RichTextSubscript
+  | RichTextSuperscript
+  | RichTextMarked
+  | RichTextCode
+  | RichTextCustomEmoji
+  | RichTextMathematicalExpression
+  | RichTextUrl
+  | RichTextEmailAddress
+  | RichTextPhoneNumber
+  | RichTextBankCardNumber
+  | RichTextMention
+  | RichTextHashtag
+  | RichTextCashtag
+  | RichTextBotCommand
+  | RichTextAnchor
+  | RichTextAnchorLink
+  | RichTextReference
+  | RichTextReferenceLink
+
+export interface RichTextBase {
+  type: string
+}
+
+export interface RichTextBold extends RichTextBase {
+  type: "bold"
+  text: RichText
+}
+
+export interface RichTextItalic extends RichTextBase {
+  type: "italic"
+  text: RichText
+}
+
+export interface RichTextUnderline extends RichTextBase {
+  type: "underline"
+  text: RichText
+}
+
+export interface RichTextStrikethrough extends RichTextBase {
+  type: "strikethrough"
+  text: RichText
+}
+
+export interface RichTextSpoiler extends RichTextBase {
+  type: "spoiler"
+  text: RichText
+}
+
+export interface RichTextDateTime extends RichTextBase {
+  type: "date_time"
+  text: RichText
+  unix_time: number
+  date_time_format: string
+}
+
+export interface RichTextTextMention extends RichTextBase {
+  type: "text_mention"
+  text: RichText
+  user: User
+}
+
+export interface RichTextSubscript extends RichTextBase {
+  type: "subscript"
+  text: RichText
+}
+
+export interface RichTextSuperscript extends RichTextBase {
+  type: "superscript"
+  text: RichText
+}
+
+export interface RichTextMarked extends RichTextBase {
+  type: "marked"
+  text: RichText
+}
+
+export interface RichTextCode extends RichTextBase {
+  type: "code"
+  text: RichText
+}
+
+export interface RichTextCustomEmoji extends RichTextBase {
+  type: "custom_emoji"
+  custom_emoji_id: string
+  alternative_text: string
+}
+
+export interface RichTextMathematicalExpression extends RichTextBase {
+  type: "mathematical_expression"
+  expression: string
+}
+
+export interface RichTextUrl extends RichTextBase {
+  type: "url"
+  text: RichText
+  url: string
+}
+
+export interface RichTextEmailAddress extends RichTextBase {
+  type: "email_address"
+  text: RichText
+  email_address: string
+}
+
+export interface RichTextPhoneNumber extends RichTextBase {
+  type: "phone_number"
+  text: RichText
+  phone_number: string
+}
+
+export interface RichTextBankCardNumber extends RichTextBase {
+  type: "bank_card_number"
+  text: RichText
+  bank_card_number: string
+}
+
+export interface RichTextMention extends RichTextBase {
+  type: "mention"
+  text: RichText
+  username: string
+}
+
+export interface RichTextHashtag extends RichTextBase {
+  type: "hashtag"
+  text: RichText
+  hashtag: string
+}
+
+export interface RichTextCashtag extends RichTextBase {
+  type: "cashtag"
+  text: RichText
+  cashtag: string
+}
+
+export interface RichTextBotCommand extends RichTextBase {
+  type: "bot_command"
+  text: RichText
+  bot_command: string
+}
+
+export interface RichTextAnchor extends RichTextBase {
+  type: "anchor"
+  name: string
+}
+
+export interface RichTextAnchorLink extends RichTextBase {
+  type: "anchor_link"
+  text: RichText
+  anchor_name: string
+}
+
+export interface RichTextReference extends RichTextBase {
+  type: "reference"
+  text: RichText
+  name: string
+}
+
+export interface RichTextReferenceLink extends RichTextBase {
+  type: "reference_link"
+  text: RichText
+  reference_name: string
+}
+
+export interface RichMessage {
+  blocks: RichBlock[]
+  is_rtl?: boolean
+}
+
+export interface InputRichMessage {
+  html?: string
+  markdown?: string
+  is_rtl?: boolean
+  skip_entity_detection?: boolean
+}
+
+export interface RichBlockCaption {
+  text: RichText
+  credit?: RichText
+}
+
+export interface RichBlockTableCell {
+  text?: RichText
+  is_header?: boolean
+  colspan?: number
+  rowspan?: number
+  align: "left" | "center" | "right"
+  valign: "top" | "middle" | "bottom"
+}
+
+export interface RichBlockListItem {
+  label: string
+  blocks: RichBlock[]
+  has_checkbox?: boolean
+  is_checked?: boolean
+  value?: number
+  type?: "a" | "A" | "i" | "I" | "1"
+}
+
+export type RichBlock = RichBlockParagraph
+  | RichBlockSectionHeading
+  | RichBlockPreformatted
+  | RichBlockFooter
+  | RichBlockDivider
+  | RichBlockMathematicalExpression
+  | RichBlockAnchor
+  | RichBlockList
+  | RichBlockBlockQuotation
+  | RichBlockPullQuotation
+  | RichBlockCollage
+  | RichBlockSlideshow
+  | RichBlockTable
+  | RichBlockDetails
+  | RichBlockMap
+  | RichBlockAnimation
+  | RichBlockAudio
+  | RichBlockPhoto
+  | RichBlockVideo
+  | RichBlockVoiceNote
+  | RichBlockThinking
+
+export interface RichBlockParagraph {
+  type: "paragraph"
+  text: RichText
+}
+
+export interface RichBlockSectionHeading {
+  type: "heading"
+  text: RichText
+  size: number
+}
+
+export interface RichBlockPreformatted {
+  type: "pre"
+  text: RichText
+  language?: string
+}
+
+export interface RichBlockFooter {
+  type: "footer"
+  text: RichText
+}
+
+export interface RichBlockDivider {
+  type: "divider"
+}
+
+export interface RichBlockMathematicalExpression {
+  type: "mathematical_expression"
+  expression: string
+}
+
+export interface RichBlockAnchor {
+  type: "anchor"
+  name: string
+}
+
+export interface RichBlockList {
+  type: "list"
+  items: RichBlockListItem[]
+}
+
+export interface RichBlockBlockQuotation {
+  type: "blockquote"
+  blocks: RichBlock[]
+  credit?: RichText
+}
+
+export interface RichBlockPullQuotation {
+  type: "pullquote"
+  text: RichText
+  credit?: RichText
+}
+
+export interface RichBlockCollage {
+  type: "collage"
+  blocks: RichBlock[]
+  caption?: RichBlockCaption
+}
+
+export interface RichBlockSlideshow {
+  type: "slideshow"
+  blocks: RichBlock[]
+  caption?: RichBlockCaption
+}
+
+export interface RichBlockTable {
+  type: "table"
+  cells: RichBlockTableCell[][]
+  is_bordered?: boolean
+  is_striped?: boolean
+  caption?: RichText
+}
+
+export interface RichBlockDetails {
+  type: "details"
+  summary: RichText
+  blocks: RichBlock[]
+  is_open?: boolean
+}
+
+export interface RichBlockMap {
+  type: "map"
+  location: Location
+  zoom: number
+  width: number
+  height: number
+  caption?: RichBlockCaption
+}
+
+export interface RichBlockAnimation {
+  type: "animation"
+  animation: Animation
+  has_spoiler?: boolean
+  caption?: RichBlockCaption
+}
+
+export interface RichBlockAudio {
+  type: "audio"
+  audio: Audio
+  caption?: RichBlockCaption
+}
+
+export interface RichBlockPhoto {
+  type: "photo"
+  photo: PhotoSize[]
+  has_spoiler?: boolean
+  caption?: RichBlockCaption
+}
+
+export interface RichBlockVideo {
+  type: "video"
+  video: Video
+  has_spoiler?: boolean
+  caption?: RichBlockCaption
+}
+
+export interface RichBlockVoiceNote {
+  type: "voice_note"
+  voice_note: Voice
+  caption?: RichBlockCaption
+}
+
+export interface RichBlockThinking {
+  type: "thinking"
+  text: RichText
 }
 
 export interface Contact {
@@ -805,15 +1506,64 @@ export interface Venue {
   google_place_type?: string;
 }
 
+export interface Link {
+  url: string
+}
+
+export interface PollMedia {
+  animation?: Animation
+  audio?: Audio
+  document?: Document
+  link?: Link
+  location?: Location
+  photo?: PhotoSize[]
+  sticker?: Sticker
+  venue?: Venue
+  video?: Video
+}
+
+export type InputPollMedia = InputMediaAnimation
+  | InputMediaAudio
+  | InputMediaDocument
+  | InputMediaLocation
+  | InputMediaPhoto
+  | InputMediaVenue
+  | InputMediaVideo
+
+export type InputPollOptionMedia = InputMediaAnimation
+  | InputMediaLink
+  | InputMediaLocation
+  | InputMediaPhoto
+  | InputMediaSticker
+  | InputMediaVenue
+  | InputMediaVideo
+
+export interface InputPollOption {
+  text: string
+  text_parse_mode?: ParseMode
+  text_entities?: MessageEntity[]
+  media?: InputPollOptionMedia
+}
+
 export interface PollOption {
+  persistent_id?: string
   text: string;
+  text_entities?: MessageEntity[]
+  media?: PollMedia
   voter_count: number;
+  added_by_user?: User
+  added_by_chat?: Chat
+  addition_date?: number
 }
 
 export interface Poll {
   id: string;
   question: string;
   options: PollOption[];
+  media?: PollMedia
+  explanation_media?: PollMedia
+  members_only?: boolean
+  country_codes?: string[]
   is_closed: boolean;
 }
 
@@ -1196,12 +1946,16 @@ type InlineQueryResult =
   InlineQueryResultVideo |
   InlineQueryResultVoice;
 
-type InputMessageContent = object;
+export type InputMessageContent = object;
 
 export interface InputTextMessageContent extends InputMessageContent {
   message_text: string;
   parse_mode?: ParseMode;
   disable_web_page_preview?: boolean;
+}
+
+export interface InputRichMessageContent extends InputMessageContent {
+  rich_message: InputRichMessage
 }
 
 export interface InputLocationMessageContent extends InputMessageContent {
@@ -1315,6 +2069,7 @@ export interface ChatJoinRequest {
   from: User
   user_chat_id: number
   date: number
+  query_id?: string
   bio?: string
   invite_link?: ChatInviteLink
 }
@@ -1462,6 +2217,24 @@ export function sendMessage(token: string, payload: SendMessageOptions, signal: 
     headers,
     signal
   }).then(parseResponse<Message>)
+}
+
+export function sendRichMessage(token: string, payload: SendRichMessageOptions, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/sendRichMessage`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
+    signal
+  }).then(parseResponse<Message>)
+}
+
+export function sendRichMessageDraft(token: string, payload: SendRichMessageDraftOptions, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/sendRichMessageDraft`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
+    signal
+  }).then(parseResponse<Boolean>)
 }
 
 export function editMessageText(token: string, payload: EditMessageTextOptions, signal: AbortSignal) {
@@ -1680,6 +2453,24 @@ export function getBusinessConnection(token: string, payload: { business_connect
   }).then(parseResponse<BusinessConnection>)
 }
 
+export function answerChatJoinRequestQuery(token: string, payload: AnswerChatJoinRequestQueryOptions, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/answerChatJoinRequestQuery`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
+    signal
+  }).then(parseResponse<Boolean>)
+}
+
+export function sendChatJoinRequestWebApp(token: string, payload: SendChatJoinRequestWebAppOptions, signal: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/sendChatJoinRequestWebApp`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers,
+    signal
+  }).then(parseResponse<Boolean>)
+}
+
 /**
  * Parsers
  */
@@ -1882,6 +2673,10 @@ function parsePoll(v: Poll) {
     id: String(v.id),
     question: String(v.question),
     options: parsePollOptions(v.options),
+    media: v.media ? parsePollMedia(v.media) : void 0,
+    explanation_media: v.explanation_media ? parsePollMedia(v.explanation_media) : void 0,
+    members_only: v.members_only,
+    country_codes: Array.isArray(v.country_codes) ? v.country_codes.map(String) : void 0,
     is_closed: Boolean(v.is_closed),
   }
 }
@@ -1892,8 +2687,28 @@ function parsePollOptions(v: PollOption[]) {
 
 function parsePollOption(v: PollOption) {
   return {
+    persistent_id: v.persistent_id ? String(v.persistent_id) : void 0,
     text: String(v.text),
+    text_entities: v.text_entities ? parseEntities(v.text_entities) : void 0,
+    media: v.media ? parsePollMedia(v.media) : void 0,
     voter_count: Number(v.voter_count),
+    added_by_user: v.added_by_user ? parseUser(v.added_by_user) : void 0,
+    added_by_chat: v.added_by_chat ? parseChat(v.added_by_chat) : void 0,
+    addition_date: v.addition_date ? Number(v.addition_date) : void 0,
+  }
+}
+
+function parsePollMedia(v: PollMedia): PollMedia {
+  return {
+    animation: v.animation ? parseAnimation(v.animation) : void 0,
+    audio: v.audio ? parseAudio(v.audio) : void 0,
+    document: v.document ? parseDocument(v.document) : void 0,
+    link: v.link ? { url: String(v.link.url) } : void 0,
+    location: v.location ? parseLocation(v.location) : void 0,
+    photo: v.photo ? parsePhotoSizes(v.photo) : void 0,
+    sticker: v.sticker ? parseSticker(v.sticker) : void 0,
+    venue: v.venue ? parseVenue(v.venue) : void 0,
+    video: v.video ? parseVideo(v.video) : void 0,
   }
 }
 
