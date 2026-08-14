@@ -9,9 +9,10 @@ export type ChatAction = "typing"
   | "upload_photo"
   | "record_video"
   | "upload_video"
-  | "record_audio"
-  | "upload_audio"
+  | "record_voice"
+  | "upload_voice"
   | "upload_document"
+  | "choose_sticker"
   | "find_location"
   | "record_video_note"
   | "upload_video_note";
@@ -25,49 +26,28 @@ export type ChatMemberStatus = "creator"
 
 export type DocumentMimeType = "application/pdf" | "application/zip";
 
-export type MessageType =
-  | "text"
-  | "animation"
-  | "audio"
-  | "channel_chat_created"
-  | "contact"
-  | "delete_chat_photo"
-  | "document"
-  | "game"
-  | "group_chat_created"
-  | "invoice"
-  | "left_chat_member"
-  | "location"
-  | "migrate_from_chat_id"
-  | "migrate_to_chat_id"
-  | "new_chat_members"
-  | "new_chat_photo"
-  | "new_chat_title"
-  | "passport_data"
-  | "photo"
-  | "pinned_message"
-  | "rich_message"
-  | "sticker"
-  | "successful_payment"
-  | "supergroup_chat_created"
-  | "video"
-  | "video_note"
-  | "voice";
-
-type MessageEntityType = "mention"
+export type MessageEntityType = "mention"
   | "hashtag"
+  | "cashtag"
   | "bot_command"
   | "url"
   | "email"
+  | "phone_number"
   | "bold"
   | "italic"
+  | "underline"
+  | "strikethrough"
+  | "spoiler"
+  | "blockquote"
+  | "expandable_blockquote"
   | "code"
   | "pre"
   | "text_link"
   | "text_mention"
   | "custom_emoji"
+  | "date_time"
 
-type ParseMode = "Markdown"
+export type ParseMode = "Markdown"
   | "MarkdownV2"
   | "HTML";
 
@@ -921,13 +901,16 @@ export interface ReactionCount {
   total_count: number
 }
 
-export interface MessageEntity {
+export type MessageEntity = {
   type: MessageEntityType;
   offset: number;
   length: number;
   url?: string;
   user?: User;
+  language?: string
   custom_emoji_id?: string
+  unix_time?: number
+  date_time_format?: string
 }
 
 export interface FileBase {
@@ -1013,18 +996,23 @@ export interface PaidMediaInfo {
   paid_media: PaidMedia[]
 }
 
-export type PaidMedia = PaidMediaPreview | PaidMediaPhoto | PaidMediaVideo
+export type PaidMedia = PaidMediaPreview | PaidMediaLivePhoto | PaidMediaPhoto | PaidMediaVideo
 
 export interface PaidMediaPreview {
   type: "preview"
-  width: number
-  height: number
-  duration: number
+  width?: number
+  height?: number
+  duration?: number
+}
+
+export interface PaidMediaLivePhoto {
+  type: "live_photo"
+  live_photo: LivePhoto
 }
 
 export interface PaidMediaPhoto {
   type: "photo"
-  photo: PhotoSize
+  photo: PhotoSize[]
 }
 
 export interface PaidMediaVideo {
@@ -1036,6 +1024,7 @@ export interface InputMediaBase {
   media: string;
   caption?: string;
   parse_mode?: ParseMode;
+  caption_entities?: MessageEntity[]
 }
 
 export interface InputMediaAnimation extends InputMediaBase {
@@ -1044,6 +1033,8 @@ export interface InputMediaAnimation extends InputMediaBase {
   thumbnail?: string
   caption?: string
   parse_mode?: ParseMode
+  caption_entities?: MessageEntity[]
+  show_caption_above_media?: boolean
   width?: number
   height?: number
   duration?: number
@@ -1053,8 +1044,10 @@ export interface InputMediaAnimation extends InputMediaBase {
 export interface InputMediaAudio extends InputMediaBase {
   type: "audio"
   media: string
+  thumbnail?: string
   caption?: string
   parse_mode?: ParseMode;
+  caption_entities?: MessageEntity[]
   duration?: number
   performer?: string
   title?: string
@@ -1063,8 +1056,22 @@ export interface InputMediaAudio extends InputMediaBase {
 export interface InputMediaDocument extends InputMediaBase {
   type: "document";
   media: string
+  thumbnail?: string
   caption?: string
   parse_mode?: ParseMode;
+  caption_entities?: MessageEntity[]
+  disable_content_type_detection?: boolean
+}
+
+export interface InputMediaLivePhoto extends InputMediaBase {
+  type: "live_photo"
+  media: string
+  photo: string
+  caption?: string
+  parse_mode?: ParseMode
+  caption_entities?: MessageEntity[]
+  show_caption_above_media?: boolean
+  has_spoiler?: boolean
 }
 
 export interface InputMediaPhoto extends InputMediaBase {
@@ -1072,16 +1079,25 @@ export interface InputMediaPhoto extends InputMediaBase {
   media: string
   caption?: string
   parse_mode?: ParseMode;
+  caption_entities?: MessageEntity[]
+  show_caption_above_media?: boolean
+  has_spoiler?: boolean
 }
 
 export interface InputMediaVideo extends InputMediaBase {
   type: "video";
+  thumbnail?: string
+  cover?: string
+  start_timestamp?: number
   caption?: string
   parse_mode?: ParseMode;
+  caption_entities?: MessageEntity[]
+  show_caption_above_media?: boolean
   width?: number;
   height?: number;
   duration?: number;
   supports_streaming?: boolean;
+  has_spoiler?: boolean
 }
 
 export interface InputMediaLink {
@@ -1114,7 +1130,12 @@ export interface InputMediaVenue {
   google_place_type?: string
 }
 
-export type InputMedia = InputMediaPhoto | InputMediaVideo | InputMediaDocument | InputMediaAudio;
+export type InputMedia = InputMediaAnimation
+  | InputMediaAudio
+  | InputMediaDocument
+  | InputMediaLivePhoto
+  | InputMediaPhoto
+  | InputMediaVideo;
 
 export interface VideoNote extends FileBase {
   length: number;
@@ -1515,6 +1536,7 @@ export interface PollMedia {
   audio?: Audio
   document?: Document
   link?: Link
+  live_photo?: LivePhoto
   location?: Location
   photo?: PhotoSize[]
   sticker?: Sticker
@@ -1525,6 +1547,7 @@ export interface PollMedia {
 export type InputPollMedia = InputMediaAnimation
   | InputMediaAudio
   | InputMediaDocument
+  | InputMediaLivePhoto
   | InputMediaLocation
   | InputMediaPhoto
   | InputMediaVenue
@@ -1532,6 +1555,7 @@ export type InputPollMedia = InputMediaAnimation
 
 export type InputPollOptionMedia = InputMediaAnimation
   | InputMediaLink
+  | InputMediaLivePhoto
   | InputMediaLocation
   | InputMediaPhoto
   | InputMediaSticker
@@ -2112,10 +2136,6 @@ export interface GameHighScore {
   position: number;
   user: User;
   score: number;
-}
-
-export interface Metadata {
-  type?: MessageType;
 }
 
 export interface BotCommand {
