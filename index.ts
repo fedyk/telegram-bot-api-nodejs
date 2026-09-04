@@ -715,11 +715,11 @@ export interface ChecklistTasksAdded {
 }
 
 export interface CommunityChatAdded {
-  chat: Community
+  community: Community
 }
 
 export interface CommunityChatRemoved {
-  chat: Community
+  community: Community
 }
 
 export interface DirectMessagePriceChanged {
