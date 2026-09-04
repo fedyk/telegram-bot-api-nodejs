@@ -715,11 +715,11 @@ export interface ChecklistTasksAdded {
 }
 
 export interface CommunityChatAdded {
-  chat: Chat
+  chat: Community
 }
 
 export interface CommunityChatRemoved {
-  chat: Chat
+  chat: Community
 }
 
 export interface DirectMessagePriceChanged {
@@ -1663,6 +1663,17 @@ export interface CallbackQuery {
   chat_instance: string;
   data?: string;
   game_short_name?: string;
+}
+
+export interface Community {
+  /**
+   * Unique identifier for this community. This number may have more than 32 significant bits and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this identifier.
+   */
+  id: number
+  /**
+   * Name of the community
+   */
+  name: string
 }
 
 export interface ForceReply {
