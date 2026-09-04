@@ -1,7 +1,12 @@
 import { describe, it } from "node:test"
 import { deepEqual, equal, match, rejects } from "node:assert/strict"
+import { mkdtemp, readFile, rm } from "node:fs/promises"
+import { join } from "node:path"
+import { tmpdir } from "node:os"
 import {
+  TELEGRAM_BOT_API_CHANGELOG_URL,
   TELEGRAM_BOT_API_URL,
+  generateChangelogMarkdown,
   generateIndexSource,
   generateMethods,
   generateTypes,
@@ -71,6 +76,24 @@ const fixture = `
 <tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr>
 <tr><td>chat_id</td><td>Integer or String</td><td>Yes</td><td>Unique identifier for the target chat</td></tr>
 </tbody></table>
+`
+
+const changelogFixture = `
+<div id="dev_page_content">
+<h3><a class="anchor" name="recent-changes" href="#recent-changes"><i class="anchor-icon"></i></a>Recent changes</h3>
+<blockquote>
+<p>Subscribe to <a href="https://t.me/botnews">@BotNews</a> to be the first to know about the latest updates.</p>
+</blockquote>
+<h3><a class="anchor" name="2026" href="#2026"><i class="anchor-icon"></i></a>2026</h3>
+<h4><a class="anchor" name="july-14-2026" href="#july-14-2026"><i class="anchor-icon"></i></a>July 14, 2026</h4>
+<p><strong>Bot API 10.2</strong></p>
+<p><strong>Rich Messages</strong></p>
+<ul>
+<li>Added the class <a href="/bots/api#inputrichmessagemedia">InputRichMessageMedia</a> and the field <em>media</em>.</li>
+<li>All webhook requests now include <code>secret_token</code>.</li>
+</ul>
+</div>
+<div class="footer_wrap"></div>
 `
 
 describe(parseSections.name, function () {
@@ -145,6 +168,7 @@ describe(generateTypes.name, function () {
     })
 
     match(messageEntity?.source ?? "", /type: "mention" \| "custom_emoji" \| "date_time"/)
+    match(messageEntity?.source ?? "", /\/\*\*\n   \* Offset in UTF-16 code units to the start of the entity\n   \*\//)
     match(messageEntity?.source ?? "", /url\?: string/)
     match(messageEntity?.source ?? "", /unix_time\?: number/)
     match(livePhoto?.source ?? "", /type: "live_photo"/)
@@ -191,6 +215,7 @@ describe(generateMethods.name, function () {
     equal(sendPhoto?.hasUpload, true)
     match(sendPhoto?.source.join("\n") ?? "", /payload: SendPhotoOptions \| FormData/)
     match(sendPhoto?.source.join("\n") ?? "", /prepareFormBody\(payload\)/)
+    match(sendPhoto?.source.join("\n") ?? "", /\/\*\*\n   \* Photo to send\n   \*\//)
     match(sendPhoto?.source.join("\n") ?? "", /photo: InputFile \| string/)
     match(sendPhoto?.source.join("\n") ?? "", /caption\?: string/)
   })
@@ -208,50 +233,93 @@ describe(generateIndexSource.name, function () {
   })
 })
 
-describe(sync.name, function () {
-  it("fetches the Telegram Bot API URL and writes generated index2.ts content", async function () {
-    let requestedUrl = ""
-    let writtenPath = ""
-    let writtenData = ""
+describe(generateChangelogMarkdown.name, function () {
+  it("converts Telegram changelog HTML to Markdown", function () {
+    const markdown = generateChangelogMarkdown(changelogFixture)
 
-    const source = await sync({
-      fetchImpl: async function (url) {
-        requestedUrl = url
+    match(markdown, /^# Bot API changelog/)
+    match(markdown, /## Recent changes/)
+    match(markdown, /### July 14, 2026/)
+    match(markdown, /\*\*Bot API 10\.2\*\*/)
+    match(markdown, /- Added the class \[InputRichMessageMedia\]\(https:\/\/core\.telegram\.org\/bots\/api#inputrichmessagemedia\) and the field _media_\./)
+    match(markdown, /`secret_token`/)
+  })
+})
+
+describe(sync.name, function () {
+  it("fetches Telegram docs and writes generated beta.ts and changelog.md content", async function () {
+    const originalFetch = global.fetch
+    const originalCwd = process.cwd()
+    const tmp = await mkdtemp(join(tmpdir(), "telegram-bot-api-sync-"))
+    const requestedUrls: string[] = []
+
+    try {
+      process.chdir(tmp)
+
+      global.fetch = async function (url) {
+        const requestedUrl = String(url)
+        requestedUrls.push(requestedUrl)
 
         return {
           ok: true,
           status: 200,
           statusText: "OK",
-          async text() {
-            return fixture
+          headers: new Headers(),
+          redirected: false,
+          type: "basic",
+          url: requestedUrl,
+          clone() {
+            return this as Response
           },
-        }
-      },
-      writeFileImpl: async function (path, data) {
-        writtenPath = path
-        writtenData = data
-      },
-    })
+          async text() {
+            return requestedUrl === TELEGRAM_BOT_API_CHANGELOG_URL ? changelogFixture : fixture
+          },
+        } as Response
+      }
 
-    equal(requestedUrl, TELEGRAM_BOT_API_URL)
-    equal(writtenPath, "index2.ts")
-    equal(source, writtenData)
-    match(writtenData, /export type PaidMedia = PaidMediaLivePhoto/)
+      const source = await sync()
+      const writtenData = await readFile("beta.ts", "utf8")
+      const changelog = await readFile("changelog.md", "utf8")
+
+      deepEqual(requestedUrls, [TELEGRAM_BOT_API_URL, TELEGRAM_BOT_API_CHANGELOG_URL])
+      equal(source, writtenData)
+      match(writtenData, /export type PaidMedia = PaidMediaLivePhoto/)
+      match(changelog, /# Bot API changelog/)
+      match(changelog, /### July 14, 2026/)
+    }
+    finally {
+      global.fetch = originalFetch
+      process.chdir(originalCwd)
+      await rm(tmp, { recursive: true, force: true })
+    }
   })
 
   it("throws when the docs request fails", async function () {
-    await rejects(sync({
-      fetchImpl: async function () {
+    const originalFetch = global.fetch
+
+    try {
+      global.fetch = async function () {
         return {
           ok: false,
           status: 503,
           statusText: "Service Unavailable",
+          headers: new Headers(),
+          redirected: false,
+          type: "basic",
+          url: TELEGRAM_BOT_API_URL,
+          clone() {
+            return this as Response
+          },
           async text() {
             return ""
           },
-        }
-      },
-      writeFileImpl: async function () { },
-    }), /Failed to fetch/)
+        } as Response
+      }
+
+      await rejects(sync(), /Failed to fetch/)
+    }
+    finally {
+      global.fetch = originalFetch
+    }
   })
 })
