@@ -21,8 +21,8 @@
   ],
   "scripts": {
     "prepublishOnly": "npm run build && npm run test && npm run spec",
-    "build": "ts",
-    "watch": "ts --watch",
+    "build": "tsc",
+    "watch": "tsc --watch",
     "test": "node --test",
     "spec": "node --test spec.js"
   },
