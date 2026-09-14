@@ -11,9 +11,9 @@
   "files": [
     "index.js",
     "index.d.ts",
-    "api.ts",
+    "api.js",
     "api.d.ts",
-    "helpers.ts",
+    "helpers.js",
     "helpers.d.ts",
     "currencies.json",
     "CHANGELOG.md",
