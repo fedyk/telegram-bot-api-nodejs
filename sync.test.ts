@@ -6,6 +6,7 @@ import { tmpdir } from "node:os"
 import {
   TELEGRAM_BOT_API_CHANGELOG_URL,
   TELEGRAM_BOT_API_URL,
+  TELEGRAM_BOT_CURRENCIES_URL,
   generateChangelogMarkdown,
   generateIndexSource,
   generateMethods,
@@ -279,7 +280,7 @@ describe(sync.name, function () {
       const writtenData = await readFile("api.ts", "utf8")
       const changelog = await readFile("CHANGELOG.md", "utf8")
 
-      deepEqual(requestedUrls, [TELEGRAM_BOT_API_URL, TELEGRAM_BOT_API_CHANGELOG_URL])
+      deepEqual(requestedUrls, [TELEGRAM_BOT_API_URL, TELEGRAM_BOT_CURRENCIES_URL, TELEGRAM_BOT_API_CHANGELOG_URL])
       equal(source, writtenData)
       match(writtenData, /export type PaidMedia = PaidMediaLivePhoto/)
       match(changelog, /# Bot API changelog/)
