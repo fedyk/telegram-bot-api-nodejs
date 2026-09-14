@@ -1,6 +1,7 @@
 import { writeFile } from "node:fs/promises"
 
 export const TELEGRAM_BOT_API_URL = "https://core.telegram.org/bots/api"
+export const TELEGRAM_BOT_CURRENCIES_URL = "https://core.telegram.org/bots/payments/currencies.json"
 export const TELEGRAM_BOT_API_CHANGELOG_URL = "https://core.telegram.org/bots/api-changelog"
 
 export interface DocSection {
@@ -50,11 +51,13 @@ const reservedTypeNames = new Set([
 
 export async function sync() {
   const html = await fetchText(TELEGRAM_BOT_API_URL)
+  const currenciesJSON = await fetchText(TELEGRAM_BOT_CURRENCIES_URL)
   const changelogHtml = await fetchText(TELEGRAM_BOT_API_CHANGELOG_URL)
   const source = generateIndexSource(parseBotApiHtml(html))
   const changelog = generateChangelogMarkdown(changelogHtml)
 
   await writeFile("api.ts", source)
+  await writeFile("currencies.json", currenciesJSON)
   await writeFile("CHANGELOG.md", changelog)
 
   return source
