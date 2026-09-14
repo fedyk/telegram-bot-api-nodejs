@@ -1,4 +1,90 @@
-import { readFileSync } from "node:fs"
+import { MaybeInaccessibleMessage, Message, MessageOrigin } from "./api.js"
+
+/**
+ * Helpers
+ */
+export function prepareFormBody(payload: FormData | object): BodyInit | string {
+  if (payload instanceof FormData) {
+    return payload
+  }
+
+  return JSON.stringify(payload)
+}
+
+export function prepareFormHeaders(forPayload: FormData | object): HeadersInit | undefined {
+  if (forPayload instanceof FormData) {
+    return undefined
+  }
+
+  return {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+  }
+}
+
+export function parseResponse<T>(response: Response) {
+  return response.text().then(function (text) {
+    let data: any
+
+    try {
+      data = JSON.parse(text)
+    }
+    catch (err) {
+      throw new TelegramError(`Invalid response: \${text}`, response.status)
+    }
+
+    if (Boolean(data.ok)) {
+      return data.result as T
+    }
+
+    const error_code = Number(data.error_code ?? 0)
+    const description = String(data.description ?? "")
+    const parameters = Object.assign(data.parameters || {}, {
+      text,
+      url: removeTokenFromUrl(response.url)
+    })
+
+    throw new TelegramError(description, error_code, parameters)
+  })
+}
+
+export class TelegramError extends Error {
+  status: number
+  data: Record<string, any>
+
+  constructor(message: string, status: number, data: Record<string, any> = {}, options?: ErrorOptions) {
+    super(message, options)
+
+    this.status = status
+    this.data = data
+  }
+}
+
+export function fetch(url: string, param?: RequestInit) {
+  const start = Date.now()
+
+  return global.fetch(url, param).catch(function (cause) {
+    throw new TelegramFetchDebugError(cause.message, { cause }, {
+      url: removeTokenFromUrl(url),
+      duration: Date.now() - start
+    })
+  })
+}
+
+class TelegramFetchDebugError extends Error {
+  data: unknown
+
+  constructor(message: string, options: ErrorOptions, data: unknown) {
+    super(message, options)
+    this.data = data
+  }
+}
+
+export function removeTokenFromUrl(url: string) {
+  return String(url).replace(/bot([\\d]+)\\:([^\\/]+)/ig, function (match, botId, token) {
+    return `bot\${botId}:\${"*".repeat(token.length)}`
+  })
+}
 
 export const SUPPORTED_REACTION_EMOJI = ["👍", "👎", "\u2764\ufe0f" // red heart
   , "🔥", "🥰", "👏", "😁", "🤔", "🤯", "😱", "🤬", "😢"
@@ -199,10 +285,10 @@ export function resolveMessageOriginName(messageOrigin: MessageOrigin) {
   }
 }
 
-export function removeTokenFromUrl(url: string) {
-  return String(url).replace(/bot([\d]+)\:([^\/]+)/ig, function (match, botId, token) {
-    return `bot${botId}:${"*".repeat(token.length)}`
-  })
+export function isAccessibleMessage(message: MaybeInaccessibleMessage): message is Message {
+  return Boolean(
+    message.chat && message.date && message.message_id && Object.keys(message).length > 3
+  )
 }
 
 export namespace currencies {
@@ -265,7 +351,9 @@ export namespace currencies {
   }
 
   function loadCurrencies(): Record<string, Currency> {
-    return JSON.parse(readFileSync(`${__dirname}/currencies.json`, {
+    const fs = require("fs")
+
+    return JSON.parse(fs.readFileSync(`${__dirname}/currencies.json`, {
       encoding: "utf8"
     }))
   }

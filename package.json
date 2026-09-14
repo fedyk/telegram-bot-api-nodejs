@@ -11,6 +11,10 @@
   "files": [
     "index.js",
     "index.d.ts",
+    "api.ts",
+    "api.d.ts",
+    "helpers.ts",
+    "helpers.d.ts",
     "currencies.json",
     "README.md"
   ],

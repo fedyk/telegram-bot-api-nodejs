@@ -1,7 +1,8 @@
 import { describe, it } from "node:test"
 import { deepEqual, equal } from "node:assert/strict"
 import { readFileSync } from "node:fs"
-import { fetch, getMe } from "./index.js"
+import { getMe } from "./api.js"
+import { fetch } from "./helpers.js"
 
 const source_url = "https://core.telegram.org/bots/payments/currencies.json"
 
