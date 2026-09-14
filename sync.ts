@@ -55,7 +55,7 @@ export async function sync() {
   const changelog = generateChangelogMarkdown(changelogHtml)
 
   await writeFile("api.ts", source)
-  await writeFile("changelog.md", changelog)
+  await writeFile("CHANGELOG.md", changelog)
 
   return source
 }
@@ -344,7 +344,7 @@ function renderOptionsInterface(name: string, fields: DocField[]) {
 
 function renderFieldType(field: DocField, sectionByName: Map<string, DocSection>) {
   const constantValue = parseConstantTypeValue(field)
-  console.log({ field, constantValue })
+
   if (constantValue) {
     return JSON.stringify(constantValue)
   }
@@ -630,7 +630,7 @@ function parseConstantTypeValue(field: DocField) {
   }
 
   const oneOfUnion = field.description.match(/(?:must be one of)\s+"([^"]+)"/i)
-  
+
   if (oneOfUnion) {
     return
   }
