@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs"
 import { MaybeInaccessibleMessage, Message, MessageOrigin } from "./api.js"
 
 /**
@@ -30,7 +31,7 @@ export function parseResponse<T>(response: Response) {
       data = JSON.parse(text)
     }
     catch (err) {
-      throw new TelegramError(`Invalid response: \${text}`, response.status)
+      throw new TelegramError(`Invalid response: ${text}`, response.status)
     }
 
     if (Boolean(data.ok)) {
@@ -81,8 +82,8 @@ class TelegramFetchDebugError extends Error {
 }
 
 export function removeTokenFromUrl(url: string) {
-  return String(url).replace(/bot([\\d]+)\\:([^\\/]+)/ig, function (match, botId, token) {
-    return `bot\${botId}:\${"*".repeat(token.length)}`
+  return String(url).replace(/bot([\d]+)\:([^\/]+)/ig, function (_, botId, token) {
+    return `bot${botId}:${"*".repeat(token.length)}`
   })
 }
 
@@ -351,9 +352,7 @@ export namespace currencies {
   }
 
   function loadCurrencies(): Record<string, Currency> {
-    const fs = require("fs")
-
-    return JSON.parse(fs.readFileSync(`${__dirname}/currencies.json`, {
+    return JSON.parse(readFileSync(`${__dirname}/currencies.json`, {
       encoding: "utf8"
     }))
   }

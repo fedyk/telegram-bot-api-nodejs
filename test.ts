@@ -131,23 +131,20 @@ test(parseRetryAfterTime.name, function () {
   equal(parseRetryAfterTime(new Error("Too Many Requests: retry after 39")), 39)
 })
 
-describe(currencies.formatPrice.name, function () {
-  it("format amount", function () {
-    equal(currencies.formatPrice(100, "USD"), "$1")
-    equal(currencies.formatPrice(100, "EUR"), "1 €")
-    equal(currencies.formatPrice(123, "EUR"), "1.23 €")
-    equal(currencies.formatPrice(123, "PLN"), "1.23 zł")
-  })
+test(currencies.formatPrice.name, function () {
+  equal(currencies.formatPrice(100, "USD"), "$1")
+  equal(currencies.formatPrice(100, "EUR"), "1 €")
+  equal(currencies.formatPrice(123, "EUR"), "1.23 €")
+  equal(currencies.formatPrice(123, "PLN"), "1.23 zł")
 })
 
-describe(removeTokenFromUrl.name, function () {
-  it("should remove sensetive token from URL", function () {
-    equal(removeTokenFromUrl(""), "")
-    equal(
-      removeTokenFromUrl("https://api.telegram.org/bot123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11/getMe"),
-      "https://api.telegram.org/bot123456:**********************************/getMe"
-    )
-  })
+test(removeTokenFromUrl.name, function () {
+  equal(removeTokenFromUrl(""), "")
+
+  equal(
+    removeTokenFromUrl("https://api.telegram.org/bot123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11/method"),
+    "https://api.telegram.org/bot123456:**********************************/method"
+  )
 })
 
 test(isFailToGetHTTPURLContentError.name, function () {

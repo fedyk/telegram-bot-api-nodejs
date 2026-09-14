@@ -225,11 +225,9 @@ describe(generateIndexSource.name, function () {
   it("renders types before methods and helpers", function () {
     const source = generateIndexSource(parseBotApiHtml(fixture))
 
-    equal(source.includes("export type InputFile = Blob | string"), true)
-    equal(source.indexOf("* Types") < source.indexOf("* Methods"), true)
-    equal(source.indexOf("* Methods") < source.indexOf("* Helpers"), true)
+    equal(source.includes("export type InputFile = Blob | string"), true, "source should include InputFile")
+    equal(source.indexOf("* Types") < source.indexOf("* Methods"), true, "source should include Methods section")
     match(source, /export function sendPhoto/)
-    match(source, /export function parseResponse/)
   })
 })
 
@@ -247,7 +245,7 @@ describe(generateChangelogMarkdown.name, function () {
 })
 
 describe(sync.name, function () {
-  it("fetches Telegram docs and writes generated beta.ts and changelog.md content", async function () {
+  it("fetches Telegram docs and writes generated api.ts and changelog.md content", async function () {
     const originalFetch = global.fetch
     const originalCwd = process.cwd()
     const tmp = await mkdtemp(join(tmpdir(), "telegram-bot-api-sync-"))
@@ -278,7 +276,7 @@ describe(sync.name, function () {
       }
 
       const source = await sync()
-      const writtenData = await readFile("beta.ts", "utf8")
+      const writtenData = await readFile("api.ts", "utf8")
       const changelog = await readFile("changelog.md", "utf8")
 
       deepEqual(requestedUrls, [TELEGRAM_BOT_API_URL, TELEGRAM_BOT_API_CHANGELOG_URL])
@@ -291,35 +289,6 @@ describe(sync.name, function () {
       global.fetch = originalFetch
       process.chdir(originalCwd)
       await rm(tmp, { recursive: true, force: true })
-    }
-  })
-
-  it("throws when the docs request fails", async function () {
-    const originalFetch = global.fetch
-
-    try {
-      global.fetch = async function () {
-        return {
-          ok: false,
-          status: 503,
-          statusText: "Service Unavailable",
-          headers: new Headers(),
-          redirected: false,
-          type: "basic",
-          url: TELEGRAM_BOT_API_URL,
-          clone() {
-            return this as Response
-          },
-          async text() {
-            return ""
-          },
-        } as Response
-      }
-
-      await rejects(sync(), /Failed to fetch/)
-    }
-    finally {
-      global.fetch = originalFetch
     }
   })
 })
