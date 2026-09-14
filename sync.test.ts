@@ -245,7 +245,7 @@ describe(generateChangelogMarkdown.name, function () {
 })
 
 describe(sync.name, function () {
-  it("fetches Telegram docs and writes generated api.ts and changelog.md content", async function () {
+  it("fetches Telegram docs and writes generated api.ts and CHANGELOG.md content", async function () {
     const originalFetch = global.fetch
     const originalCwd = process.cwd()
     const tmp = await mkdtemp(join(tmpdir(), "telegram-bot-api-sync-"))
@@ -277,7 +277,7 @@ describe(sync.name, function () {
 
       const source = await sync()
       const writtenData = await readFile("api.ts", "utf8")
-      const changelog = await readFile("changelog.md", "utf8")
+      const changelog = await readFile("CHANGELOG.md", "utf8")
 
       deepEqual(requestedUrls, [TELEGRAM_BOT_API_URL, TELEGRAM_BOT_API_CHANGELOG_URL])
       equal(source, writtenData)

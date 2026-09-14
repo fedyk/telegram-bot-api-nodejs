@@ -16,6 +16,7 @@
     "helpers.ts",
     "helpers.d.ts",
     "currencies.json",
+    "CHANGELOG.md",
     "README.md"
   ],
   "scripts": {
