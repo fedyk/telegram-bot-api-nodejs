@@ -87,15 +87,6 @@ export function removeTokenFromUrl(url: string) {
   })
 }
 
-export const SUPPORTED_REACTION_EMOJI = ["👍", "👎", "\u2764\ufe0f" // red heart
-  , "🔥", "🥰", "👏", "😁", "🤔", "🤯", "😱", "🤬", "😢"
-  , "🎉", "🤩", "🤮", "💩", "🙏", "👌", "🕊", "🤡", "🥱", "🥴", "😍", "🐳", "❤‍🔥"
-  , "🌚", "🌭", "💯", "🤣", "⚡", "🍌", "🏆", "💔", "🤨", "😐", "🍓", "🍾", "💋"
-  , "🖕", "😈", "😴", "😭", "🤓", "👻", "👨‍💻", "👀", "🎃", "🙈", "😇", "😨", "🤝"
-  , "✍", "🤗", "🫡", "🎅", "🎄", "☃", "💅", "🤪", "🗿", "🆒", "💘", "🙉", "🦄"
-  , "😘", "💊", "🙊", "😎", "👾", "🤷‍♂", "🤷", "🤷‍♀", "😡"
-]
-
 export function isUnauthorizedError(err: unknown): boolean {
   return err instanceof Error && err.message === "Unauthorized"
 }

@@ -102,6 +102,16 @@ export function generateIndexSource(model: ApiModel): string {
 
     "",
     ...model.types.map(function (type) {
+      if (type.name === "ReactionTypeEmoji") {
+        const emoji = type.source.match(/^  emoji: (.+)$/m)
+
+        if (!emoji) {
+          throw new RangeError("ReactionTypeEmoji.emoji enum is missing")
+        }
+
+        return type.source + `\nexport const SUPPORTED_REACTION_EMOJI: ReactionTypeEmoji["emoji"][] = [${emoji[1].split(" | ").join(", ")}]\n`
+      }
+
       return type.source
     }),
     "/**",
