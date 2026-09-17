@@ -22,6 +22,7 @@
   "scripts": {
     "prepublishOnly": "npm run build && npm run test && npm run spec",
     "build": "tsc",
+    "sync": "node sync.js",
     "watch": "tsc --watch",
     "test": "node --test",
     "spec": "node --test spec.js"

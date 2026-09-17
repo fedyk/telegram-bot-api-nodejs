@@ -634,6 +634,7 @@ function parseConstantTypeValue(field: DocField) {
 
   const oneOfUnion = field.description.match(/(?:must be one of)\s+"([^"]+)"/i)
 
+  // leave enums for `parseLiteralUnion`
   if (oneOfUnion) {
     return
   }
@@ -658,7 +659,15 @@ function parseLiteralUnion(description: string) {
     return match[1]
   })
 
-  return [...new Set(quoted)]
+  const set = new Set(quoted)
+
+  // fix for ❤ -> ❤️
+  if (set.has("❤")) {
+    set.delete("❤")
+    set.add("❤️")
+  }
+
+  return [...set]
 }
 
 function isOptionalField(field: DocField) {
