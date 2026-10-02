@@ -1,4 +1,4 @@
-name: Weekly sync check
+name: sync
 
 on:
   schedule:
@@ -30,6 +30,9 @@ jobs:
             echo "::error::Sync found changes. Run npm run sync locally and commit the updated files."
             printf '%s\n' "$changes"
             git diff --stat HEAD
-            git diff HEAD
+            git --no-pager diff --no-ext-diff --no-color --binary HEAD
+            while IFS= read -r -d '' file; do
+              git --no-pager diff --no-ext-diff --no-color --binary --no-index -- /dev/null "$file" || [ "$?" -eq 1 ]
+            done < <(git ls-files --others --exclude-standard -z)
             exit 1
           fi
