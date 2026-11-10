@@ -72,6 +72,14 @@ export interface Update {
    */
   callback_query?: CallbackQuery
   /**
+   * Optional. New incoming query from a widget in a message sent by the bot or via the bot
+   */
+  widget_query?: WidgetQuery
+  /**
+   * Optional. New incoming query from a forwarded message with a shared widget
+   */
+  shared_widget_query?: SharedWidgetQuery
+  /**
    * Optional. New incoming shipping query. Only for invoices with flexible price.
    */
   shipping_query?: ShippingQuery
@@ -487,6 +495,14 @@ export interface ChatFullInfo {
    * Optional. The Community to which the chat belongs
    */
   community?: Community
+  /**
+   * Optional. For private chats, the TON wallet card of the user, which is shown on their profile page
+   */
+  ton_wallet_card?: TonWalletCard
+  /**
+   * Optional. For private chats, supergroups and channels, the theme of the screen for sharing a link to the user or the chat; omitted if the default theme is used
+   */
+  share_theme?: ChatShareTheme
 }
 
 export interface Message {
@@ -691,7 +707,11 @@ export interface Message {
    */
   voice?: Voice
   /**
-   * Optional. Caption for the animation, audio, document, paid media, photo, video or voice
+   * Optional. Message is an HTML widget, information about the widget
+   */
+  widget?: Widget
+  /**
+   * Optional. Caption for the animation, audio, document, live photo, paid media, photo, video, voice, or widget
    */
   caption?: string
   /**
@@ -699,7 +719,7 @@ export interface Message {
    */
   caption_entities?: MessageEntity[]
   /**
-   * Optional. True, if the caption must be shown above the message media
+   * Optional. True, if the caption must be shown above the message media or the widget
    */
   show_caption_above_media?: boolean
   /**
@@ -919,6 +939,10 @@ export interface Message {
    */
   paid_message_price_changed?: PaidMessagePriceChanged
   /**
+   * Optional. Service message: the sender of the message used a link of the other user, which allows sending messages to the user without paying Telegram Stars
+   */
+  paid_messages_waived?: PaidMessagesWaived
+  /**
    * Optional. Service message: answer option was added to a poll
    */
   poll_option_added?: PollOptionAdded
@@ -946,6 +970,10 @@ export interface Message {
    * Optional. Service message: payment for a suggested post was refunded
    */
   suggested_post_refunded?: SuggestedPostRefunded
+  /**
+   * Optional. Service message: a transfer with a TON wallet
+   */
+  ton_wallet_transfer?: TonWalletTransfer
   /**
    * Optional. Service message: video chat scheduled
    */
@@ -999,9 +1027,9 @@ export type MaybeInaccessibleMessage = Message
 
 export interface MessageEntity {
   /**
-   * Type of the entity. Currently, can be "mention" (@username), "hashtag" (#hashtag or #hashtag@chatusername), "cashtag" ($USD or $USD@chatusername), "bot_command" (/start@jobs_bot), "url" (https://telegram.org), "email" (do-not-reply@telegram.org), "phone_number" (+1-212-555-0123), "bold" (bold text), "italic" (italic text), "underline" (underlined text), "strikethrough" (strikethrough text), "spoiler" (spoiler message), "blockquote" (block quotation), "expandable_blockquote" (collapsed-by-default block quotation), "code" (monowidth string), "pre" (monowidth block), "text_link" (for clickable text URLs), "text_mention" (for users without usernames), "custom_emoji" (for inline custom emoji stickers), or "date_time" (for formatted date and time).
+   * Type of the entity. Currently, can be "mention" (@username), "hashtag" (#hashtag or #hashtag@chatusername), "cashtag" ($USD or $USD@chatusername), "bot_command" (/start@jobs_bot), "url" (https://telegram.org), "email" (do-not-reply@telegram.org), "phone_number" (+1-212-555-0123), "bank_card_number" (bank card number), "ton_address" (address in the TON blockchain), "bold" (bold text), "italic" (italic text), "underline" (underlined text), "strikethrough" (strikethrough text), "spoiler" (spoiler message), "blockquote" (block quotation), "expandable_blockquote" (collapsed-by-default block quotation), "code" (monowidth string), "pre" (monowidth block), "text_link" (for clickable text URLs), "text_mention" (for users without usernames), "custom_emoji" (for inline custom emoji stickers), or "date_time" (for formatted date and time).
    */
-  type: "mention" | "hashtag" | "cashtag" | "bot_command" | "url" | "email" | "phone_number" | "bold" | "italic" | "underline" | "strikethrough" | "spoiler" | "blockquote" | "expandable_blockquote" | "code" | "pre" | "text_link" | "text_mention" | "custom_emoji" | "date_time"
+  type: "mention" | "hashtag" | "cashtag" | "bot_command" | "url" | "email" | "phone_number" | "bank_card_number" | "ton_address" | "bold" | "italic" | "underline" | "strikethrough" | "spoiler" | "blockquote" | "expandable_blockquote" | "code" | "pre" | "text_link" | "text_mention" | "custom_emoji" | "date_time"
   /**
    * Offset in UTF-16 code units to the start of the entity
    */
@@ -1038,7 +1066,7 @@ export interface MessageEntity {
 
 export interface TextQuote {
   /**
-   * Text of the quoted part of a message that is replied to by the given message
+   * Text of the quoted part of a message that is replied to by the given message; may be empty if the quote was chosen from a rich message
    */
   text: string
   /**
@@ -1046,7 +1074,11 @@ export interface TextQuote {
    */
   entities?: MessageEntity[]
   /**
-   * Approximate quote position in the original message in UTF-16 code units as specified by the sender
+   * Optional. Rich text of the quote if it was chosen from a rich message. May contain only plain text, RichTextBold, RichTextItalic, RichTextUnderline, RichTextStrikethrough, RichTextSpoiler, RichTextSubscript, RichTextSuperscript, RichTextDateTime, RichTextCustomEmoji, RichTextMathematicalExpression, and arrays of them.
+   */
+  rich_texts?: RichText[]
+  /**
+   * Approximate quote position in the original message in UTF-16 code units as specified by the sender. For quotes from rich messages, it is the position in the text formed by joining plain texts of all quotable texts of the message, separated by line feeds.
    */
   position: number
   /**
@@ -1117,6 +1149,10 @@ export interface ExternalReplyInfo {
    */
   voice?: Voice
   /**
+   * Optional. Message is an HTML widget, information about the widget
+   */
+  widget?: Widget
+  /**
    * Optional. True, if the message media is covered by a spoiler animation
    */
   has_media_spoiler?: boolean
@@ -1168,7 +1204,7 @@ export interface ReplyParameters {
    */
   message_id?: number
   /**
-   * Optional. If the message to be replied to is from a different chat, unique identifier for the chat or username of the bot, supergroup or channel in the format @username. Not supported for messages sent on behalf of a business account, messages from channel direct messages chats and ephemeral messages.
+   * Optional. If the message to be replied to is from a different chat, unique identifier for the chat or username of the bot, supergroup, or channel in the format @username. Not supported for messages sent on behalf of a business account, messages from channel direct messages chats and ephemeral messages.
    */
   chat_id?: number | string
   /**
@@ -1192,7 +1228,11 @@ export interface ReplyParameters {
    */
   quote_entities?: MessageEntity[]
   /**
-   * Optional. Position of the quote in the original message in UTF-16 code units
+   * Optional. A JSON-serialized list of quoted parts of the rich message to be replied to. Must contain one element for each quoted text of the message in the order of their appearance. Each of the following is a separate quoted text: the text of a paragraph, a heading, a preformatted block, a footer, or a mathematical expression; the text and the credit of a block quotation or a pull quotation; the summary of a details block; the caption and each cell of a table; the text and the credit of a caption of a media block, a collage, a slideshow, or a map. Texts of blocks nested in lists, block quotations, details, collages, and slideshows are separate quoted texts too. The first and the last elements can contain only a part of the corresponding text; all other elements must contain the whole text. Formatting of the quoted parts must be kept, and rich texts must be nested in the same way as in the message received from the server. Mathematical expressions must be quoted entirely. Buttons in RichBlockButtons, anchors and dividers can't be quoted. Up to 32 quoted texts with total length up to 1024 characters can be specified. Only plain text, RichTextBold, RichTextItalic, RichTextUnderline, RichTextStrikethrough, RichTextSpoiler, RichTextSubscript, RichTextSuperscript, RichTextDateTime, RichTextCustomEmoji, RichTextMathematicalExpression, and arrays of them are kept in the quote; other rich text types are replaced with their text. If non-empty, then quote, quote_parse_mode and quote_entities are ignored.
+   */
+  quote_rich_texts?: RichText[]
+  /**
+   * Optional. Position of the quote in the original message in UTF-16 code units. For quotes from rich messages, it is the position in the text formed by joining plain texts of all quotable texts of the message, separated by line feeds.
    */
   quote_position?: number
   /**
@@ -1207,11 +1247,11 @@ export interface ReplyParameters {
 
 export interface EphemeralMessageParameters {
   /**
-   * Identifier of the user who will receive the message. It is not guaranteed that the user will receive the message, especially if they are offline. See here for more details.
+   * Optional. Identifier of the user who will receive the message; required unless the message is sent as an ephemeral reply to a callback query. If omitted, then the parameter chat_id of the method is ignored. If specified together with callback_query_id, then it must be the identifier of the user who pressed the button. Must be omitted for messages sent in chats where the bot isn't a member, unless the message is a reply to an ephemeral message. It is not guaranteed that the user will receive the message, especially if they are offline. See here for more details.
    */
-  receiver_user_id: number
+  receiver_user_id?: number
   /**
-   * Optional. Identifier of the callback query which triggered the message, if any
+   * Optional. Identifier of the callback query which triggered the message, if any. If specified and receiver_user_id is omitted, then the message is sent as an ephemeral reply to the callback query and will be shown only to the user who pressed the button. Ephemeral replies can't be sent to callback queries from messages in channel direct messages chats. The bot must still answer the callback query using answerCallbackQuery.
    */
   callback_query_id?: string
   /**
@@ -1597,6 +1637,33 @@ export interface Voice {
    * Optional. File size in bytes. It can be bigger than 2^31 and some programming languages may have difficulty/silent defects in interpreting it. But it has at most 52 significant bits, so a signed 64-bit integer or double-precision float type are safe for storing this value.
    */
   file_size?: number
+}
+
+export interface Widget {
+  /**
+   * Optional. Unique identifier of the shared widget, which can be used to send the widget again using the method sendSharedWidget; omitted if the widget isn't shared
+   */
+  id?: string
+  /**
+   * Optional. Width of the widget in logical pixels; omitted if the widget must occupy the whole width of the message bubble
+   */
+  width?: number
+  /**
+   * Optional. Height of the widget in logical pixels; omitted if the height of the widget isn't fixed
+   */
+  height?: number
+  /**
+   * HTML code of the widget
+   */
+  html: string
+  /**
+   * Optional. Public data of the widget, which is available wherever the widget is shown. All messages with a shared widget have the same public data.
+   */
+  public_data?: string
+  /**
+   * Optional. Data of the widget, which is specific to the message
+   */
+  chat_data?: string
 }
 
 export interface PaidMediaInfo {
@@ -2612,6 +2679,28 @@ export interface SuggestedPostRefunded {
   reason: "post_deleted" | "payment_refunded"
 }
 
+export interface PaidMessagesWaived {
+}
+
+export interface TonWalletTransfer {
+  /**
+   * Unique identifier of the transaction; may be empty if the transfer hasn't been sent yet
+   */
+  transaction_id: string
+  /**
+   * Address of the transfer peer in the TON blockchain
+   */
+  peer_address: string
+  /**
+   * The amount of transferred cryptocurrency, in the smallest units of the cryptocurrency, as a decimal number; negative for outgoing transfers
+   */
+  amount: string
+  /**
+   * Optional. Comment added to the transfer; omitted if the comment is encrypted
+   */
+  comment?: string
+}
+
 export interface GiveawayCreated {
   /**
    * Optional. The number of Telegram Stars to be split between giveaway winners; for Telegram Star giveaways only
@@ -3009,7 +3098,7 @@ export interface KeyboardButtonRequestManagedBot {
    */
   suggested_name?: string
   /**
-   * Optional. Suggested username for the bot
+   * Optional. Suggested username for the bot. The username must end with "bot". If the user creating the bot has a Telegram Premium subscription, then the username can also end with "agent", "ai", "app", "game", or "gay"; in this case, the username will be assigned to the bot as a secondary username, and a regular username ending with "bot" will be assigned to the bot automatically.
    */
   suggested_username?: string
 }
@@ -3065,7 +3154,7 @@ export interface InlineKeyboardButton {
    */
   callback_data?: string
   /**
-   * Optional. Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. Available only in private chats between a user and the bot. Not supported for messages sent on behalf of a business account.
+   * Optional. Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. Available only in private chats between a user and the bot. Not supported for messages sent on behalf of a business account and ephemeral messages.
    */
   web_app?: WebAppInfo
   /**
@@ -3183,6 +3272,136 @@ export interface CallbackQuery {
    * Optional. Short name of a Game to be returned, serves as the unique identifier for the game
    */
   game_short_name?: string
+}
+
+export type WidgetQueryType = WidgetQueryTypeData
+  | WidgetQueryTypeSignData
+  | WidgetQueryTypeSentTransaction
+
+export interface WidgetQueryTypeData {
+  /**
+   * Type of the query, always "data"
+   */
+  type: "data"
+  /**
+   * Optional. TON wallet card of the user who sent the query, if it was sent to the bot along with the query
+   */
+  wallet_card?: TonWalletCard
+}
+
+export interface WidgetQueryTypeSignData {
+  /**
+   * Type of the query, always "sign_data"
+   */
+  type: "sign_data"
+  /**
+   * The wallet that signed the data
+   */
+  wallet: WidgetQueryWallet
+  /**
+   * JSON-serialized signed data
+   */
+  sign_data: string
+}
+
+export interface WidgetQueryTypeSentTransaction {
+  /**
+   * Type of the query, always "sent_transaction"
+   */
+  type: "sent_transaction"
+  /**
+   * The wallet from which the transaction was sent
+   */
+  wallet: WidgetQueryWallet
+  /**
+   * Value of msg_hash of the transaction
+   */
+  msg_hash: string
+}
+
+export interface WidgetQueryWallet {
+  /**
+   * Address of the wallet
+   */
+  address: string
+  /**
+   * Balance of the wallet, in the smallest units of the cryptocurrency, as a decimal number
+   */
+  amount: string
+  /**
+   * Optional. Hex-encoded public key of the wallet; omitted if unknown
+   */
+  public_key?: string
+  /**
+   * Optional. Base64-encoded serialized StateInit of the wallet contract; omitted if and only if public_key is omitted
+   */
+  state_init?: string
+}
+
+export interface WidgetQuery {
+  /**
+   * Unique identifier for this query
+   */
+  id: string
+  /**
+   * Sender
+   */
+  from: User
+  /**
+   * Optional. Chat with the message containing the widget; omitted if the widget is in an inline message
+   */
+  chat?: Chat
+  /**
+   * Optional. Identifier of the message containing the widget; omitted if the widget is in an inline message
+   */
+  message_id?: number
+  /**
+   * Optional. Identifier of the inline message containing the widget
+   */
+  inline_message_id?: string
+  /**
+   * Global identifier, uniquely corresponding to the chat to which the message with the widget was sent
+   */
+  chat_instance: string
+  /**
+   * Optional. For widgets in inline messages, type of the chat to which the message was sent. Can be either "sender" for a private chat with the inline query sender, "private", "group", "supergroup", or "channel".
+   */
+  chat_type?: "sender" | "private" | "group" | "supergroup" | "channel"
+  /**
+   * Type of the query
+   */
+  type: WidgetQueryType
+  /**
+   * Data of the query, 1-64 bytes
+   */
+  data: string
+  /**
+   * Optional. Unique identifier of the shared widget, which sent the query; omitted if the widget isn't shared
+   */
+  widget_id?: string
+}
+
+export interface SharedWidgetQuery {
+  /**
+   * Unique identifier for this query
+   */
+  id: string
+  /**
+   * Sender
+   */
+  from: User
+  /**
+   * Type of the query
+   */
+  type: WidgetQueryType
+  /**
+   * Data of the query, 1-64 bytes
+   */
+  data: string
+  /**
+   * Unique identifier of the shared widget, which sent the query
+   */
+  widget_id: string
 }
 
 export interface ForceReply {
@@ -3569,7 +3788,7 @@ export interface ChatMemberRestricted {
    */
   can_send_polls: boolean
   /**
-   * True, if the user is allowed to send animations, games, stickers and use inline bots
+   * True, if the user is allowed to send animations, games, stickers, widgets and use inline bots
    */
   can_send_other_messages: boolean
   /**
@@ -3697,7 +3916,7 @@ export interface ChatPermissions {
    */
   can_send_polls?: boolean
   /**
-   * Optional. True, if the user is allowed to send animations, games, stickers and use inline bots
+   * Optional. True, if the user is allowed to send animations, games, stickers, widgets and use inline bots
    */
   can_send_other_messages?: boolean
   /**
@@ -3812,21 +4031,21 @@ export interface UserRating {
   next_level_rating?: number
 }
 
-export interface StoryAreaPosition {
+export interface AreaPosition {
   /**
-   * The abscissa of the area's center, as a percentage of the media width
+   * The abscissa of the area's center, as a percentage of the media or the card width
    */
   x_percentage: number
   /**
-   * The ordinate of the area's center, as a percentage of the media height
+   * The ordinate of the area's center, as a percentage of the media or the card height
    */
   y_percentage: number
   /**
-   * The width of the area's rectangle, as a percentage of the media width
+   * The width of the area's rectangle, as a percentage of the media or the card width
    */
   width_percentage: number
   /**
-   * The height of the area's rectangle, as a percentage of the media height
+   * The height of the area's rectangle, as a percentage of the media or the card height
    */
   height_percentage: number
   /**
@@ -3834,9 +4053,157 @@ export interface StoryAreaPosition {
    */
   rotation_angle: number
   /**
-   * The radius of the rectangle corner rounding, as a percentage of the media width
+   * The radius of the rectangle corner rounding, as a percentage of the media or the card width
    */
   corner_radius_percentage: number
+}
+
+export interface TonNft {
+  /**
+   * Address of the NFT
+   */
+  address: string
+  /**
+   * Optional. Address of the collection to which the NFT belongs; omitted if unknown
+   */
+  collection_address?: string
+  /**
+   * Index of the NFT among all NFTs from the collection as a decimal number
+   */
+  index: string
+  /**
+   * Name of the NFT
+   */
+  name: string
+  /**
+   * Description of the NFT
+   */
+  description: string
+  /**
+   * Optional. Attributes of the NFT
+   */
+  attributes?: TonNftAttribute[]
+  /**
+   * Optional. The unique gift corresponding to the NFT
+   */
+  gift?: UniqueGift
+}
+
+export interface TonNftAttribute {
+  /**
+   * Trait type of the attribute
+   */
+  trait_type: string
+  /**
+   * Value of the attribute
+   */
+  value: string
+}
+
+export interface TonWalletCardSticker {
+  /**
+   * Position of the sticker on the card
+   */
+  position: AreaPosition
+  /**
+   * The NFT shown as the sticker
+   */
+  nft: TonNft
+}
+
+export interface TonWalletCard {
+  /**
+   * Address of the wallet
+   */
+  address: string
+  /**
+   * Balance of the wallet, in the smallest units of the cryptocurrency, as a decimal number
+   */
+  amount: string
+  /**
+   * Stickers placed on the card
+   */
+  stickers: TonWalletCardSticker[]
+  /**
+   * Optional. Address of the NFT of one of the stickers, whose colors must be used for the card background; omitted if the default background must be used
+   */
+  background_nft_address?: string
+}
+
+export type EmojiType = EmojiTypeEmoji
+  | EmojiTypeCustomEmoji
+
+export interface EmojiTypeEmoji {
+  /**
+   * Type of the emoji, always "emoji"
+   */
+  type: "emoji"
+  /**
+   * The emoji
+   */
+  emoji: string
+}
+
+export interface EmojiTypeCustomEmoji {
+  /**
+   * Type of the emoji, always "custom_emoji"
+   */
+  type: "custom_emoji"
+  /**
+   * Identifier of the custom emoji. Use getCustomEmojiStickers to get full information about the sticker.
+   */
+  custom_emoji_id: string
+}
+
+export type ChatShareTheme = ChatShareThemeEmoji
+  | ChatShareThemeUniqueGift
+
+export interface ChatShareThemeEmoji {
+  /**
+   * Type of the theme, always "emoji"
+   */
+  type: "emoji"
+  /**
+   * The emoji; 0-6 regular or custom emoji
+   */
+  emojis: EmojiType[]
+  /**
+   * Optional. Identifier of the backdrop used as the background; omitted if the default background is used. Use getChatShareThemeBackdrops to get details about the backdrop.
+   */
+  background_backdrop_id?: number
+}
+
+export interface ChatShareThemeUniqueGift {
+  /**
+   * Type of the theme, always "unique_gift"
+   */
+  type: "unique_gift"
+  /**
+   * The gift
+   */
+  gift: UniqueGift
+}
+
+export interface ChatShareThemeBackdrops {
+  /**
+   * The list of backdrops
+   */
+  backdrops: ChatShareThemeBackdrop[]
+}
+
+export interface ChatShareThemeBackdrop {
+  /**
+   * Unique identifier of the backdrop
+   */
+  id: number
+  /**
+   * Name of the backdrop
+   */
+  name: string
+  /**
+   * Colors of the backdrop
+   */
+  colors: UniqueGiftBackdropColors
 }
 
 export interface LocationAddress {
@@ -3947,7 +4314,7 @@ export interface StoryArea {
   /**
    * Position of the area
    */
-  position: StoryAreaPosition
+  position: AreaPosition
   /**
    * Type of the area
    */
@@ -5696,6 +6063,7 @@ export type RichText = RichText[]
   | RichTextEmailAddress
   | RichTextPhoneNumber
   | RichTextBankCardNumber
+  | RichTextTonAddress
   | RichTextMention
   | RichTextHashtag
   | RichTextCashtag
@@ -5923,6 +6291,21 @@ export interface RichTextBankCardNumber {
    * The bank card number
    */
   bank_card_number: string
+}
+
+export interface RichTextTonAddress {
+  /**
+   * Type of the rich text, always "ton_address"
+   */
+  type: "ton_address"
+  /**
+   * Text of the address
+   */
+  text: RichText
+  /**
+   * The address
+   */
+  address: string
 }
 
 export interface RichTextMention {
@@ -7917,6 +8300,8 @@ export type InputMessageContent = InputTextMessageContent
   | InputVenueMessageContent
   | InputContactMessageContent
   | InputInvoiceMessageContent
+  | InputWidgetMessageContent
+  | InputSharedWidgetMessageContent
 
 export interface InputTextMessageContent {
   /**
@@ -8106,6 +8491,80 @@ export interface InputInvoiceMessageContent {
    * Optional. Pass True if the final price depends on the shipping method. Ignored for payments in Telegram Stars.
    */
   is_flexible?: boolean
+}
+
+export interface InputWidgetMessageContent {
+  /**
+   * HTML code of the widget, 1-32768 bytes. The code must not exceed 4096 bytes when compressed by zlib with the maximum compression level.
+   */
+  html: string
+  /**
+   * Optional. Width of the widget in logical pixels; omit if the widget must occupy the whole width of the message bubble. The width is clamped by the app to the range from 200 to the maximum width of the message bubble.
+   */
+  width?: number
+  /**
+   * Optional. Height of the widget in logical pixels; omit if the height of the widget isn't fixed. The height is clamped by the app to the range 50-600.
+   */
+  height?: number
+  /**
+   * Optional. Public data of the widget, 0-1024 bytes, which will be available wherever the widget is shown. If the widget is shared, then all messages with it will have the same public data.
+   */
+  public_data?: string
+  /**
+   * Optional. Data of the widget, which is specific to the message, 0-1024 bytes
+   */
+  chat_data?: string
+  /**
+   * Optional. Widget caption, 0-1024 characters after entities parsing
+   */
+  caption?: string
+  /**
+   * Optional. Mode for parsing entities in the widget caption. See formatting options for more details.
+   */
+  parse_mode?: string
+  /**
+   * Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+   */
+  caption_entities?: MessageEntity[]
+  /**
+   * Optional. Pass True if the caption must be shown above the widget
+   */
+  show_caption_above_media?: boolean
+  /**
+   * Optional. Pass True to allow the widget to send queries to the bot
+   */
+  allow_queries?: boolean
+  /**
+   * Optional. Pass True to create a shared widget. Each message sent from the result creates a separate shared widget, whose identifier is received by the bot only in the field widget_id of queries from the widget. To send an existing shared widget in response to an inline query, use InputSharedWidgetMessageContent instead.
+   */
+  is_shared?: boolean
+}
+
+export interface InputSharedWidgetMessageContent {
+  /**
+   * Unique identifier of the shared widget created by the bot
+   */
+  widget_id: string
+  /**
+   * Optional. Data of the widget, which is specific to the message, 0-1024 bytes
+   */
+  chat_data?: string
+  /**
+   * Optional. Widget caption, 0-1024 characters after entities parsing
+   */
+  caption?: string
+  /**
+   * Optional. Mode for parsing entities in the widget caption. See formatting options for more details.
+   */
+  parse_mode?: string
+  /**
+   * Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode
+   */
+  caption_entities?: MessageEntity[]
+  /**
+   * Optional. Pass True if the caption must be shown above the widget
+   */
+  show_caption_above_media?: boolean
 }
 
 export interface ChosenInlineResult {
@@ -9024,9 +9483,9 @@ export interface SendMessageOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -9096,7 +9555,7 @@ export function sendMessage(token: string, payload: SendMessageOptions, signal?:
 
 export interface ForwardMessageOptions {
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username
    */
   chat_id: number | string
   /**
@@ -9108,7 +9567,7 @@ export interface ForwardMessageOptions {
    */
   direct_messages_topic_id?: number
   /**
-   * Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup or channel in the format @username)
+   * Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup, or channel in the format @username)
    */
   from_chat_id: number | string
   /**
@@ -9148,7 +9607,7 @@ export function forwardMessage(token: string, payload: ForwardMessageOptions, si
 
 export interface ForwardMessagesOptions {
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username
    */
   chat_id: number | string
   /**
@@ -9160,7 +9619,7 @@ export interface ForwardMessagesOptions {
    */
   direct_messages_topic_id?: number
   /**
-   * Unique identifier for the chat where the original messages were sent (or username of the target bot, supergroup or channel in the format @username)
+   * Unique identifier for the chat where the original messages were sent (or username of the target bot, supergroup, or channel in the format @username)
    */
   from_chat_id: number | string
   /**
@@ -9188,7 +9647,7 @@ export function forwardMessages(token: string, payload: ForwardMessagesOptions, 
 
 export interface CopyMessageOptions {
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username
    */
   chat_id: number | string
   /**
@@ -9200,7 +9659,7 @@ export interface CopyMessageOptions {
    */
   direct_messages_topic_id?: number
   /**
-   * Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup or channel in the format @username)
+   * Unique identifier for the chat where the original message was sent (or username of the target bot, supergroup, or channel in the format @username)
    */
   from_chat_id: number | string
   /**
@@ -9268,7 +9727,7 @@ export function copyMessage(token: string, payload: CopyMessageOptions, signal?:
 
 export interface CopyMessagesOptions {
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username
    */
   chat_id: number | string
   /**
@@ -9280,7 +9739,7 @@ export interface CopyMessagesOptions {
    */
   direct_messages_topic_id?: number
   /**
-   * Unique identifier for the chat where the original messages were sent (or username of the target bot, supergroup or channel in the format @username)
+   * Unique identifier for the chat where the original messages were sent (or username of the target bot, supergroup, or channel in the format @username)
    */
   from_chat_id: number | string
   /**
@@ -9316,9 +9775,9 @@ export interface SendPhotoOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -9400,9 +9859,9 @@ export interface SendLivePhotoOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -9488,9 +9947,9 @@ export interface SendAudioOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -9580,9 +10039,9 @@ export interface SendDocumentOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -9664,9 +10123,9 @@ export interface SendVideoOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -9776,9 +10235,9 @@ export interface SendAnimationOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -9876,9 +10335,9 @@ export interface SendVoiceOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -9956,9 +10415,9 @@ export interface SendVideoNoteOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -10026,13 +10485,169 @@ export function sendVideoNote(token: string, payload: SendVideoNoteOptions | For
   }).then(parseResponse<Message>)
 }
 
+export interface SendWidgetOptions {
+  /**
+   * Unique identifier for the target chat or username of the target supergroup in the format @username
+   */
+  chat_id: number | string
+  /**
+   * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
+   */
+  message_thread_id?: number
+  /**
+   * HTML code of the widget, 1-32768 bytes. The code must not exceed 4096 bytes when compressed by zlib with the maximum compression level.
+   */
+  html: string
+  /**
+   * Width of the widget in logical pixels; omit if the widget must occupy the whole width of the message bubble. The width is clamped by the app to the range from 200 to the maximum width of the message bubble.
+   */
+  width?: number
+  /**
+   * Height of the widget in logical pixels; omit if the height of the widget isn't fixed. The height is clamped by the app to the range 50-600.
+   */
+  height?: number
+  /**
+   * Public data of the widget, 0-1024 bytes, which will be available wherever the widget is shown. If the widget is shared, then all messages with it will have the same public data.
+   */
+  public_data?: string
+  /**
+   * Data of the widget, which is specific to the message, 0-1024 bytes
+   */
+  chat_data?: string
+  /**
+   * Widget caption, 0-1024 characters after entities parsing
+   */
+  caption?: string
+  /**
+   * Mode for parsing entities in the widget caption. See formatting options for more details.
+   */
+  parse_mode?: string
+  /**
+   * A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
+   */
+  caption_entities?: MessageEntity[]
+  /**
+   * Pass True if the caption must be shown above the widget
+   */
+  show_caption_above_media?: boolean
+  /**
+   * Pass True to allow the widget to send queries to the bot
+   */
+  allow_queries?: boolean
+  /**
+   * Pass True to create a shared widget, which can be sent again using the method sendSharedWidget
+   */
+  is_shared?: boolean
+  /**
+   * Sends the message silently. Users will receive a notification with no sound.
+   */
+  disable_notification?: boolean
+  /**
+   * Protects the contents of the sent message from forwarding and saving
+   */
+  protect_content?: boolean
+  /**
+   * Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars per message. The relevant Stars will be withdrawn from the bot's balance.
+   */
+  allow_paid_broadcast?: boolean
+  /**
+   * Unique identifier of the message effect to be added to the message; for private chats only
+   */
+  message_effect_id?: string
+  /**
+   * Description of the message to reply to
+   */
+  reply_parameters?: ReplyParameters
+  /**
+   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user.
+   */
+  reply_markup?: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply
+}
+
+export function sendWidget(token: string, payload: SendWidgetOptions, signal?: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/sendWidget`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: headers,
+    signal
+  }).then(parseResponse<Message>)
+}
+
+export interface SendSharedWidgetOptions {
+  /**
+   * Unique identifier for the target chat or username of the target supergroup in the format @username
+   */
+  chat_id: number | string
+  /**
+   * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
+   */
+  message_thread_id?: number
+  /**
+   * Unique identifier of the shared widget
+   */
+  widget_id: string
+  /**
+   * Data of the widget, which is specific to the message, 0-1024 bytes
+   */
+  chat_data?: string
+  /**
+   * Widget caption, 0-1024 characters after entities parsing
+   */
+  caption?: string
+  /**
+   * Mode for parsing entities in the widget caption. See formatting options for more details.
+   */
+  parse_mode?: string
+  /**
+   * A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
+   */
+  caption_entities?: MessageEntity[]
+  /**
+   * Pass True if the caption must be shown above the widget
+   */
+  show_caption_above_media?: boolean
+  /**
+   * Sends the message silently. Users will receive a notification with no sound.
+   */
+  disable_notification?: boolean
+  /**
+   * Protects the contents of the sent message from forwarding and saving
+   */
+  protect_content?: boolean
+  /**
+   * Pass True to allow up to 1000 messages per second, ignoring broadcasting limits for a fee of 0.1 Telegram Stars per message. The relevant Stars will be withdrawn from the bot's balance.
+   */
+  allow_paid_broadcast?: boolean
+  /**
+   * Unique identifier of the message effect to be added to the message; for private chats only
+   */
+  message_effect_id?: string
+  /**
+   * Description of the message to reply to
+   */
+  reply_parameters?: ReplyParameters
+  /**
+   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user.
+   */
+  reply_markup?: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply
+}
+
+export function sendSharedWidget(token: string, payload: SendSharedWidgetOptions, signal?: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/sendSharedWidget`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: headers,
+    signal
+  }).then(parseResponse<Message>)
+}
+
 export interface SendPaidMediaOptions {
   /**
    * Unique identifier of the business connection on behalf of which the message will be sent
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username. If the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance. Otherwise, they will be credited to the bot's balance.
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username. If the chat is a channel, all Telegram Star proceeds from this media will be credited to the chat's balance. Otherwise, they will be credited to the bot's balance.
    */
   chat_id: number | string
   /**
@@ -10112,7 +10727,7 @@ export interface SendMediaGroupOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username
    */
   chat_id: number | string
   /**
@@ -10164,9 +10779,9 @@ export interface SendLocationOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -10248,9 +10863,9 @@ export interface SendVenueOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -10340,9 +10955,9 @@ export interface SendContactOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -10416,7 +11031,7 @@ export interface SendPollOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username. Polls can't be sent to channel direct messages chats.
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username. Polls can't be sent to channel direct messages chats.
    */
   chat_id: number | string
   /**
@@ -10608,7 +11223,7 @@ export interface SendDiceOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username
    */
   chat_id: number | string
   /**
@@ -10736,7 +11351,7 @@ export function sendChatAction(token: string, payload: SendChatActionOptions, si
 
 export interface SetMessageReactionOptions {
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username
    */
   chat_id: number | string
   /**
@@ -11606,6 +12221,18 @@ export function getChatMember(token: string, payload: GetChatMemberOptions, sign
   }).then(parseResponse<ChatMember>)
 }
 
+export interface GetChatShareThemeBackdropsOptions {
+}
+
+export function getChatShareThemeBackdrops(token: string, payload: GetChatShareThemeBackdropsOptions, signal?: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/getChatShareThemeBackdrops`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: headers,
+    signal
+  }).then(parseResponse<ChatShareThemeBackdrops>)
+}
+
 export interface GetUserPersonalChatMessagesOptions {
   /**
    * Unique identifier for the target user
@@ -11935,6 +12562,26 @@ export interface AnswerCallbackQueryOptions {
 
 export function answerCallbackQuery(token: string, payload: AnswerCallbackQueryOptions, signal?: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: headers,
+    signal
+  }).then(parseResponse<boolean>)
+}
+
+export interface AnswerWidgetQueryOptions {
+  /**
+   * Unique identifier for the query to be answered
+   */
+  widget_query_id: string
+  /**
+   * Data to be returned to the widget, 0-1024 bytes
+   */
+  data?: string
+}
+
+export function answerWidgetQuery(token: string, payload: AnswerWidgetQueryOptions, signal?: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/answerWidgetQuery`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers: headers,
@@ -12360,7 +13007,7 @@ export interface SendGiftOptions {
    */
   user_id?: number
   /**
-   * Required if user_id is not specified. Unique identifier for the chat or username of the channel (in the format @username) that will receive the gift.
+   * Required if user_id is not specified. Unique identifier for the chat that will receive the gift or username of the channel in the format @username.
    */
   chat_id?: number | string
   /**
@@ -12439,6 +13086,14 @@ export interface VerifyUserOptions {
    * Custom description for the verification; 0-70 characters. Must be empty if the organization isn't allowed to provide a custom verification description.
    */
   custom_description?: string
+  /**
+   * Mode for parsing entities in the custom description. See formatting options for more details. Only "text_link" entities are supported.
+   */
+  custom_description_parse_mode?: string
+  /**
+   * A JSON-serialized list of special entities that appear in the custom description, which can be specified instead of custom_description_parse_mode. Only "text_link" entities are supported.
+   */
+  custom_description_entities?: MessageEntity[]
 }
 
 export function verifyUser(token: string, payload: VerifyUserOptions, signal?: AbortSignal) {
@@ -12452,13 +13107,21 @@ export function verifyUser(token: string, payload: VerifyUserOptions, signal?: A
 
 export interface VerifyChatOptions {
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username. Channel direct messages chats can't be verified.
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username. Channel direct messages chats can't be verified.
    */
   chat_id: number | string
   /**
    * Custom description for the verification; 0-70 characters. Must be empty if the organization isn't allowed to provide a custom verification description.
    */
   custom_description?: string
+  /**
+   * Mode for parsing entities in the custom description. See formatting options for more details. Only "text_link" entities are supported.
+   */
+  custom_description_parse_mode?: string
+  /**
+   * A JSON-serialized list of special entities that appear in the custom description, which can be specified instead of custom_description_parse_mode. Only "text_link" entities are supported.
+   */
+  custom_description_entities?: MessageEntity[]
 }
 
 export function verifyChat(token: string, payload: VerifyChatOptions, signal?: AbortSignal) {
@@ -12874,6 +13537,22 @@ export function getChatGifts(token: string, payload: GetChatGiftsOptions, signal
   }).then(parseResponse<OwnedGifts>)
 }
 
+export interface GetUniqueGiftOptions {
+  /**
+   * Unique name of the gift
+   */
+  name: string
+}
+
+export function getUniqueGift(token: string, payload: GetUniqueGiftOptions, signal?: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/getUniqueGift`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: headers,
+    signal
+  }).then(parseResponse<UniqueGift>)
+}
+
 export interface ConvertGiftToStarsOptions {
   /**
    * Unique identifier of the business connection
@@ -12943,6 +13622,26 @@ export interface TransferGiftOptions {
 
 export function transferGift(token: string, payload: TransferGiftOptions, signal?: AbortSignal) {
   return fetch(`https://api.telegram.org/bot${token}/transferGift`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: headers,
+    signal
+  }).then(parseResponse<boolean>)
+}
+
+export interface DeleteBusinessAccountGiftOptions {
+  /**
+   * Unique identifier of the business connection
+   */
+  business_connection_id: string
+  /**
+   * Unique identifier of the regular gift that should be deleted
+   */
+  owned_gift_id: string
+}
+
+export function deleteBusinessAccountGift(token: string, payload: DeleteBusinessAccountGiftOptions, signal?: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/deleteBusinessAccountGift`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers: headers,
@@ -13176,7 +13875,7 @@ export interface EditMessageTextOptions {
    */
   business_connection_id?: string
   /**
-   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username.
+   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username.
    */
   chat_id?: number | string
   /**
@@ -13228,7 +13927,7 @@ export interface EditMessageCaptionOptions {
    */
   business_connection_id?: string
   /**
-   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username.
+   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username.
    */
   chat_id?: number | string
   /**
@@ -13276,7 +13975,7 @@ export interface EditMessageMediaOptions {
    */
   business_connection_id?: string
   /**
-   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username.
+   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username.
    */
   chat_id?: number | string
   /**
@@ -13312,7 +14011,7 @@ export interface EditMessageLiveLocationOptions {
    */
   business_connection_id?: string
   /**
-   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username.
+   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username.
    */
   chat_id?: number | string
   /**
@@ -13368,7 +14067,7 @@ export interface StopMessageLiveLocationOptions {
    */
   business_connection_id?: string
   /**
-   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username.
+   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username.
    */
   chat_id?: number | string
   /**
@@ -13426,13 +14125,69 @@ export function editMessageChecklist(token: string, payload: EditMessageChecklis
   }).then(parseResponse<Message>)
 }
 
+export interface EditMessageWidgetDataOptions {
+  /**
+   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target supergroup in the format @username.
+   */
+  chat_id?: number | string
+  /**
+   * Required if inline_message_id is not specified. Identifier of the message with the widget.
+   */
+  message_id?: number
+  /**
+   * Required if chat_id and message_id are not specified. Identifier of the inline message.
+   */
+  inline_message_id?: string
+  /**
+   * New public data of the widget, 0-1024 bytes; pass an empty string to remove the public data. If omitted, then the public data isn't changed.
+   */
+  public_data?: string
+  /**
+   * New data of the widget, which is specific to the message, 0-1024 bytes; pass an empty string to remove the data. If omitted, then the data isn't changed.
+   */
+  chat_data?: string
+}
+
+export function editMessageWidgetData(token: string, payload: EditMessageWidgetDataOptions, signal?: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/editMessageWidgetData`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: headers,
+    signal
+  }).then(parseResponse<boolean>)
+}
+
+export interface EditSharedWidgetDataOptions {
+  /**
+   * Unique identifier of the shared widget
+   */
+  widget_id: string
+  /**
+   * New public data of the widget, 0-1024 bytes; pass an empty string to remove the public data
+   */
+  public_data: string
+  /**
+   * The maximum amount of time in seconds that the public data of the widget may be cached client-side; 5-3600. If omitted, then the current value is kept, which is 30 by default.
+   */
+  cache_time?: number
+}
+
+export function editSharedWidgetData(token: string, payload: EditSharedWidgetDataOptions, signal?: AbortSignal) {
+  return fetch(`https://api.telegram.org/bot${token}/editSharedWidgetData`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: headers,
+    signal
+  }).then(parseResponse<boolean>)
+}
+
 export interface EditMessageReplyMarkupOptions {
   /**
    * Unique identifier of the business connection on behalf of which the message to be edited was sent
    */
   business_connection_id?: string
   /**
-   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username.
+   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username.
    */
   chat_id?: number | string
   /**
@@ -13464,7 +14219,7 @@ export interface StopPollOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username
    */
   chat_id: number | string
   /**
@@ -13688,7 +14443,7 @@ export function declineSuggestedPost(token: string, payload: DeclineSuggestedPos
 
 export interface DeleteMessageOptions {
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username
    */
   chat_id: number | string
   /**
@@ -13708,7 +14463,7 @@ export function deleteMessage(token: string, payload: DeleteMessageOptions, sign
 
 export interface DeleteMessagesOptions {
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username
    */
   chat_id: number | string
   /**
@@ -13808,9 +14563,9 @@ export interface SendStickerOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -14200,9 +14955,9 @@ export interface SendRichMessageOptions {
    */
   business_connection_id?: string
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username; required unless the message is sent as an ephemeral reply to a callback query
    */
-  chat_id: number | string
+  chat_id?: number | string
   /**
    * Unique identifier for the target message thread (topic) of a forum; for forum supergroups and private chats of bots with forum topic mode enabled only
    */
@@ -14332,7 +15087,7 @@ export function answerInlineQuery(token: string, payload: AnswerInlineQueryOptio
 
 export interface SendInvoiceOptions {
   /**
-   * Unique identifier for the target chat or username of the target bot, supergroup or channel in the format @username
+   * Unique identifier for the target chat or username of the target bot, supergroup, or channel in the format @username
    */
   chat_id: number | string
   /**
