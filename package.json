@@ -1,6 +1,6 @@
 {
   "name": "telegram-bot-api-nodejs",
-  "version": "10.4.0",
+  "version": "10.4.1",
   "description": "Telegram Bot API client for nodejs",
   "type": "module",
   "main": "index.js",
